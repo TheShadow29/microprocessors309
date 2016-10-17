@@ -16,7 +16,7 @@ entity iitb_risc is
 		D3: in std_logic_vector(15 downto 0);
 		A1,A2,A3: in std_logic_vector(2 downto 0);
 		
-		clk: in std_logic
+		clk, WR: in std_logic
 	);
 end entity iitb_risc;
 
@@ -25,6 +25,6 @@ begin
 
 alu1: alu port map(X=>alui1,Y=>alui2,out_p=>aluo,op_code=>aluc,C=>C,Z=>Z);
 
-regfile1: RegFile port map(D1=>D1, D2=>D2, D3=>D3, A1=>A1, A2=>A2, A3=>A3, clk=>clk);
+regfile1: RegFile port map(D1=>D1, D2=>D2, D3=>D3, A1=>A1, A2=>A2, A3=>A3, clk=>clk, WR=>WR);
 
 end architecture;
