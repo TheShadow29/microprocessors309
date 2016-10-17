@@ -1,0 +1,11 @@
+library work
+use work.all_components.all
+
+entity TopLevel is
+
+end entity TopLevel;
+
+architecture Arch of TopLevel is
+begin
+
+end architecture;
