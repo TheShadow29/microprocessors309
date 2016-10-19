@@ -5,9 +5,9 @@ use std.textio.all;
 library work;
 use work.all_components.all;	
 
-entity Testbench is
+entity TestRF is
 end entity;
-architecture Behave of Testbench is
+architecture Behave of TestRF is
   
   function to_std_logic(x: bit) return std_logic is
       variable ret_val: std_logic;
@@ -110,7 +110,7 @@ begin
                      err_flag := true;
               end if;
             end loop;
-        end if
+        end if;
           --------------------------------------
     end loop;
 
@@ -120,6 +120,6 @@ begin
     wait;
   end process;
 
-  dut : RegFile port map (D1=>data1,D2=>data2,D3=>data3,A1=>addr1,A2=>addr2,A3=>addr3,clk=>clk);
+  dut : RegFile port map (D1=>data1,D2=>data2,D3=>data3,A1=>addr1,A2=>addr2,A3=>addr3,clk=>clk,wr=>rw);
 
 end Behave;

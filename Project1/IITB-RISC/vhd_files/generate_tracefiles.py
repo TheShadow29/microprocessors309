@@ -1,6 +1,6 @@
 from random import randint
 
-with open("tracefile_adc.txt","w") as trace:
+with open("tracefile_alu.txt","w") as trace:
     for i in range(1000):
         x = randint(0,65535);
         y = randint(0,65535);

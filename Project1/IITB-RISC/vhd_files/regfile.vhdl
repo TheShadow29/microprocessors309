@@ -13,10 +13,9 @@ entity RegFile is
 end entity RegFile;
 architecture Behave of RegFile is
 	type RegArray is array (natural range <>) of std_logic_vector(15 downto 0);
-	type EnableArray is array (natural range <>) of std_logic;
-
+	
 	signal R: RegArray(7 downto 0);
-	signal En: EnableArray(7 downto 0);
+	signal En: std_logic_vector(7 downto 0);
 begin
 
 RegFile:
@@ -46,15 +45,7 @@ D2Mux: mux8 port map (A0=>R(0),
 							 s=>A2,
 							 D=>D2);
 
-
-En(0) <= not(A3(0)) and not(A3(1)) and not(A3(2)) and WR;
-En(1) <= A3(0) and not(A3(1)) and not(A3(2)) and WR;
-En(2) <= not(A3(0)) and A3(1) and not(A3(2)) and WR;
-En(3) <= A3(0) and A3(1) and not(A3(2)) and WR;
-En(4) <= not(A3(0)) and not(A3(1)) and A3(2) and WR;
-En(5) <= A3(0) and not(A3(1)) and A3(2) and WR;
-En(6) <= not(A3(0)) and A3(1) and A3(2) and WR;
-En(7) <= A3(0) and A3(1) and A3(2) and WR;
+decoder: Decoder8 port map (A=>A3,O=>En,OE=>WR);
 
 end Behave;
 ---------------------------

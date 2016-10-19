@@ -5,9 +5,9 @@ use std.textio.all;
 library work;
 use work.all_components.all;	
 
-entity Testbench is
+entity TestALU is
 end entity;
-architecture Behave of Testbench is
+architecture Behave of TestALU is
   
   function to_std_logic(x: bit) return std_logic is
       variable ret_val: std_logic;
@@ -36,7 +36,7 @@ architecture Behave of Testbench is
 begin
   process 
     variable err_flag : boolean := false;
-    File INFILE: text open read_mode is "tracefile_adc.txt";
+    File INFILE: text open read_mode is "tracefile_alu.txt";
     FILE OUTFILE: text  open write_mode is "outputs.txt";
 
     ---------------------------------------------------
@@ -45,8 +45,8 @@ begin
     variable input_alui1: bit_vector (15 downto 0);
     variable input_alui2: bit_vector (15 downto 0);
     variable output_aluo: bit_vector (15 downto 0);
-    variable output_c: bit;
-    variable output_z: bit;
+    variable output_alufc: bit;
+    variable output_alufz: bit;
     ----------------------------------------------------
     variable INPUT_LINE: Line;
     variable OUTPUT_LINE: Line;
@@ -90,17 +90,15 @@ begin
                  err_flag := true;
               end if;
         end loop;
-        if (alufc(i) /= to_std_logic(output_alufc(i))) then
+        if (alufc /= to_std_logic(output_alufc)) then
             write(OUTPUT_LINE,to_string("ERROR: in ALU Carry, line "));
-            write(OUTPUT_LINE, i);
             write(OUTPUT_LINE, LINE_COUNT);
             writeline(OUTFILE, OUTPUT_LINE);
             err_flag := true;
         end if;
 
-        if (alufz(i) /= to_std_logic(output_alufz(i))) then
+        if (alufz /= to_std_logic(output_alufz)) then
             write(OUTPUT_LINE,to_string("ERROR: in ALU Zero, line "));
-            write(OUTPUT_LINE, i);
             write(OUTPUT_LINE, LINE_COUNT);
             writeline(OUTFILE, OUTPUT_LINE);
             err_flag := true;
