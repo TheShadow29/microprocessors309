@@ -1,5 +1,6 @@
 library ieee ;
 	use ieee.std_logic_1164.all ;
+	use ieee.std_logic_unsigned.ALL;
     use ieee.numeric_std.all;
 library work;
 	use work.all_components.all;
@@ -18,7 +19,7 @@ end alu;
 
 architecture implementation of alu is 
 	signal lsb , msb : std_logic;
-	signal x16, y16: std_logic_vector(16 downto 0) := (others => '0');
+	signal x16, y16, tmp0: std_logic_vector(16 downto 0) := (others => '0');
 	signal tmp1, tmp2, sigout : std_logic_vector(15 downto 0);
 	
 begin 
@@ -29,10 +30,13 @@ begin
 	x16(15 downto 0) <= X;
 	y16(15 downto 0) <= Y;
 	
-	adder1: Adder port map(x=>X,y=>Y,z=>tmp1,cin=>'0',cout=>C);
+	--adder1: Adder port map(x=>X,y=>Y,z=>tmp1,cin=>'0',cout=>C);
+	tmp0 <= x16 + y16;
+	C <= tmp0(16) and not(op_code);
+	tmp1 <= tmp0(15 downto 0);
 	tmp2 <= not(X and Y);
 	
-	Z <= sigout(0) or
+	Z <= not(sigout(0) or
 			sigout(1) or
 			sigout(2) or
 			sigout(3) or
@@ -47,7 +51,7 @@ begin
 			sigout(12) or
 			sigout(13) or
 			sigout(14) or
-			sigout(15);
+			sigout(15));
 			
 	out_p <= sigout;
 	

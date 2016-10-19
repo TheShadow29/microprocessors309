@@ -43,3 +43,29 @@ with open("tracefile_rf.txt","w") as trace:
         b = randint(0,7)
 
         trace.write("{:01b} {:03b} {:03b} {:03b} {:016b} {:016b} {:016b}\n".format(0,a,b,0,x[a],x[b],0))
+
+with open("tracefile_pe.txt","w") as trace:
+	for i in range(256):
+		a = "{:08b}".format(i);
+		N = 1
+		if a[0] == '1':
+			s = 7
+		elif a[1] == '1':
+			s = 6
+		elif a[2] == '1':
+			s = 5
+		elif a[3] == '1':
+			s = 4
+		elif a[4] == '1':
+			s = 3
+		elif a[5] == '1':
+			s = 2
+		elif a[6] == '1':
+			s = 1
+		elif a[7] == '1':
+			s = 0
+		else:
+			s = 0
+			N = 0
+
+		trace.write("{:08b} {:03b} {:01b} \n".format(i, s,N))

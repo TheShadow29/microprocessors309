@@ -73,6 +73,12 @@ package all_components is
 		 );
 	end component RegFile;
 	
+	component PriorityEncoder is
+	port ( X : in std_logic_vector(7 downto 0) ;
+		S : out std_logic_vector(2 downto 0);
+	 N : out std_logic ) ;
+	end component;
+	
 	component iitb_risc is
 		port (
 			alui1, alui2: in std_logic_vector(15 downto 0);
