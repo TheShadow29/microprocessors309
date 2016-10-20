@@ -1,10 +1,10 @@
 v 4
-file . "datareg.vhdl" "1c13e01c631b14aa45013c36c7be255c9a0b722b" "20161017191608.464":
-  entity dataregister at 1( 0) + 0 on 94;
-  architecture nbits of dataregister at 14( 277) + 0 on 95;
-file . "regfile.vhdl" "f80a776de88890a9b0e69a8c809e561966902b3e" "20161017191608.482":
-  entity regfile at 1( 0) + 0 on 96;
-  architecture behave of regfile at 14( 306) + 0 on 97;
+file . "datareg.vhdl" "c3691e1e7c3baad8d72efddd872e41971f77519f" "20161020154851.139":
+  entity dataregister at 1( 0) + 0 on 4;
+  architecture nbits of dataregister at 14( 264) + 0 on 4;
+file . "regfile.vhdl" "5fadb2dcdabf1cf60f9142bc993c9f6b8c42cc70" "20161020154851.139":
+  entity regfile at 1( 0) + 0 on 4;
+  architecture behave of regfile at 14( 293) + 0 on 4;
 file . "muxes.vhdl" "25707dd86adb9d023a07fb164f3b846377a69025" "20161017192037.134":
   entity mux2 at 1( 0) + 0 on 101;
   architecture big of mux2 at 16( 239) + 0 on 102;
@@ -12,8 +12,14 @@ file . "muxes.vhdl" "25707dd86adb9d023a07fb164f3b846377a69025" "20161017192037.1
   architecture big of mux4 at 45( 729) + 0 on 104;
   entity mux8 at 53( 989) + 0 on 105;
   architecture big of mux8 at 68( 1265) + 0 on 106;
-file . "all_components.vhd" "d3f8c6f3b1c2ac9c64f35a1c54e2bdf0443aca20" "20161017192037.108":
-  package all_components at 1( 0) + 0 on 100;
+file . "all_components.vhd" "b42fa5ea3cd5dc6b0ffe79780ecbf0cf58516395" "20161020154806.560":
+  package all_components at 1( 0) + 0 on 109;
 file . "testrf.vhdl" "5131623300138b20bea932f2042a50e701561e51" "20161017191608.532":
   entity testrf at 1( 0) + 0 on 98;
   architecture behave of testrf at 10( 150) + 0 on 99;
+file . "memory_model.vhd" "51690dae7b18b7fe1da2cc6cf3d332954325bdde" "20161020154851.378":
+  entity memory_model at 1( 0) + 0 on 112;
+  architecture rtl of memory_model at 16( 321) + 0 on 113;
+file . "test_memory.vhdl" "e255980e3af35c47bf487c212ef6547ffbcaeded" "20161020154844.927":
+  entity test_memory at 1( 0) + 0 on 110;
+  architecture behave of test_memory at 10( 155) + 0 on 111;

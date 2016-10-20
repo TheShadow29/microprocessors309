@@ -20,7 +20,12 @@ entity iitb_risc is
 		
 		tx : in std_logic_vector(7 downto 0);
 		s : out std_logic_vector(2 downto 0);
-		N : out std_logic
+		N : out std_logic;
+		
+		addr : in std_logic_vector(15 downto 0);
+		data_in : in std_logic_vector(15 downto 0);
+		data_out : out std_logic_vector(15 downto 0);
+		rw : in std_logic
 	);
 end entity iitb_risc;
 
@@ -32,5 +37,8 @@ alu1: alu port map(X=>alui1,Y=>alui2,out_p=>aluo,op_code=>aluc,C=>C,Z=>Z);
 regfile1: RegFile port map(D1=>D1, D2=>D2, D3=>D3, A1=>A1, A2=>A2, A3=>A3, clk=>clk, WR=>WR);
 
 pri_enc : PriorityEncoder port map(x => tx, s=>s,N => N);
+
+mem : memory_model port map (clk => clk, rw => rw, enable => '1', address => addr, datain => data_in, dataout => data_out);
+
 
 end architecture;

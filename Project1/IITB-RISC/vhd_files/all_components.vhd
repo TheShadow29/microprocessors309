@@ -93,5 +93,16 @@ package all_components is
 			clk, WR: in std_logic
 		);
 	end component iitb_risc;
+	
+	component memory_model is
+	  port (
+		 clk   : in  std_logic;
+		 rw : in std_logic;
+		 enable      : in  std_logic;
+		 address : in  std_logic_vector;
+		 datain  : in  std_logic_vector;
+		 dataout : out std_logic_vector
+	  );
+	end component;
 
 end all_components;

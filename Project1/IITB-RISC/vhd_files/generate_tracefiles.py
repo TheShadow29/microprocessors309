@@ -69,3 +69,14 @@ with open("tracefile_pe.txt","w") as trace:
 			N = 0
 
 		trace.write("{:08b} {:03b} {:01b} \n".format(i, s,N))
+
+with open("tracefile_mem.txt", "w") as trace:
+    addr = 5;
+    data = 50;
+    rw = 1;
+    trace.write ("{:01b} {:016b} {:016b} \n".format(rw, addr, data))
+
+    addr = 5;
+    data = 50;
+    rw = 0;
+    trace.write ("{:01b} {:016b} {:016b} \n".format(rw, addr, data))
