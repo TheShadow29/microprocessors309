@@ -10,7 +10,7 @@ entity iitb_risc is
 	port (
 		prog_en: in std_logic;
 		prog_addr: in std_logic_vector(15 downto 0);
-		prog_data: inout std_logic_vector(15 downto 0);
+		prog_data: in std_logic_vector(15 downto 0);
 		
 		control_vector: in std_logic_vector(19 downto 0);
 		
@@ -29,13 +29,13 @@ architecture Behave of iitb_risc is
 	signal pe: std_logic_vector(2 downto 0);
 	signal N: std_logic;
 		
-	signal mem_addr,mem_data: std_logic_vector(15 downto 0);
-	signal mem_rw: std_logic;
+	signal mem_addr,mem_data, eab,edb: std_logic_vector(15 downto 0);
+	signal mem_rw, uc_rw: std_logic;
 	
 	signal t1_in,t2_in,t3_in,t3_out,
 			 ao_in,
 			 di_in,di_out,do_in,do_out,
-			 ir_in,ir_out: std_logic_vector(15 downto 0) := (others=>'0');
+			 ir_out: std_logic_vector(15 downto 0) := (others=>'0');
 	signal T_in,T_out, Tn: std_logic_vector(7 downto 0) := (others=>'0');
 	signal t1_w,t2_w,t3_w,
 			 ao_w,
@@ -56,6 +56,11 @@ regfile1: RegFile port map(D1=>D1, D2=>D2, D3=>D3, A1=>A1, A2=>A2, A3=>A3, clk=>
 pri_enc : PriorityEncoder port map(x => T_out, s=>pe,N => N, Tn=>Tn);
 mem : memory_model port map (clk => clk, rw => mem_rw, address => mem_addr, data => mem_data);
 
+-- Program mode muxes
+mem_addr_mux: mux2 port map (A0=>eab,A1=>prog_addr,s=>prog_en,D=>mem_addr);
+mem_data_mux: mux2 port map (A0=>edb,A1=>prog_data,s=>prog_en,D=>mem_data);
+mem_rw <= prog_en or uc_rw; -- Mux hai
+
 -- Registers
 t1: DataRegister port map (Din=>t1_in,Dout=>alui1,enable=>t1_w,clk=>clk);
 t2: DataRegister port map (Din=>t2_in,Dout=>alui2,enable=>t2_w,clk=>clk);
@@ -63,9 +68,9 @@ t3: DataRegister port map (Din=>aluo,Dout=>t3_out,enable=>t3_w,clk=>clk);
 T: DataRegister port map (Din=>T_in,Dout=>T_out,enable=>T_w,clk=>clk);
 
 di: DataRegister port map (Din=>mem_data,Dout=>di_out,enable=>di_w,clk=>clk);
-do: DataRegister port map (Din=>do_in,Dout=>mem_data,enable=>do_w,clk=>clk);
-ao: DataRegister port map (Din=>ao_in,Dout=>mem_addr,enable=>ao_w,clk=>clk);
-ir: DataRegister port map (Din=>ir_in,Dout=>ir_out,enable=>ir_w,clk=>clk);
+do: DataRegister port map (Din=>do_in,Dout=>edb,enable=>do_w,clk=>clk);
+ao: DataRegister port map (Din=>ao_in,Dout=>eab,enable=>ao_w,clk=>clk);
+ir: DataRegister port map (Din=>mem_data,Dout=>ir_out,enable=>ir_w,clk=>clk);
 
 -- Data path connection muxes
 ra<=ir_out(11 downto 9);
