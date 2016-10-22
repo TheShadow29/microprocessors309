@@ -6,27 +6,27 @@ package all_components is
 	component mux2 is
 		port 
 		(
-			A0,A1 : in std_logic_vector(15 downto 0);
+			A0,A1 : in std_logic_vector;
 			s : in std_logic;
-			D : out std_logic_vector (15 downto 0)
+			D : out std_logic_vector
 		);
 	end component;
 	
 	component mux4 is
 		port 
 		(
-			A0,A1,A2,A3 : in std_logic_vector(15 downto 0);
+			A0,A1,A2,A3 : in std_logic_vector;
 			s : in std_logic_vector(1 downto 0);
-			D : out std_logic_vector (15 downto 0)
+			D : out std_logic_vector
 		);
 	end component;
 	
 	component mux8 is
 		port 
 		(
-			A0,A1,A2,A3,A4,A5,A6,A7 : in std_logic_vector(15 downto 0);
+			A0,A1,A2,A3,A4,A5,A6,A7 : in std_logic_vector;
 			s : in std_logic_vector(2 downto 0);
-			D : out std_logic_vector (15 downto 0)
+			D : out std_logic_vector
 		);
 	end component;
 	
@@ -59,8 +59,8 @@ package all_components is
 	
 	component DataRegister is
 		--n bit register
-		port (Din: in std_logic_vector(15 downto 0);
-				Dout: out std_logic_vector(15 downto 0);
+		port (Din: in std_logic_vector;
+				Dout: out std_logic_vector;
 				clk, enable: in std_logic);
 	end component;
 	
@@ -76,7 +76,8 @@ package all_components is
 	component PriorityEncoder is
 	port ( X : in std_logic_vector(7 downto 0) ;
 		S : out std_logic_vector(2 downto 0);
-	 N : out std_logic ) ;
+	 N : out std_logic;
+	 Tn: out std_logic_vector(7 downto 0)) ;
 	end component;
 	
 	component iitb_risc is

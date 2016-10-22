@@ -6,8 +6,8 @@ library work;
 
 entity DataRegister is
 	--n bit register
-	port (Din: in std_logic_vector(15 downto 0);
-			Dout: out std_logic_vector(15 downto 0);
+	port (Din: in std_logic_vector;
+			Dout: out std_logic_vector;
 			clk, enable: in std_logic);
 end entity;
 
