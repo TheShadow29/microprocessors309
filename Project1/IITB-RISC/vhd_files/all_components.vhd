@@ -81,16 +81,11 @@ package all_components is
 	
 	component iitb_risc is
 		port (
-			alui1, alui2: in std_logic_vector(15 downto 0);
-			aluo: out std_logic_vector(15 downto 0);
-			aluc: in std_logic;
-			C,Z: out std_logic;
+			prog_en: in std_logic;
+			prog_addr: in std_logic_vector(15 downto 0);
+			prog_data: inout std_logic_vector(15 downto 0);
 			
-			D1,D2: out std_logic_vector(15 downto 0);
-			D3: in std_logic_vector(15 downto 0);
-			A1,A2,A3: in std_logic_vector(2 downto 0);
-			
-			clk, WR: in std_logic
+			start, done, clk: in std_logic
 		);
 	end component iitb_risc;
 	
@@ -98,10 +93,8 @@ package all_components is
 	  port (
 		 clk   : in  std_logic;
 		 rw : in std_logic;
-		 enable      : in  std_logic;
 		 address : in  std_logic_vector;
-		 datain  : in  std_logic_vector;
-		 dataout : out std_logic_vector
+		 data  : inout  std_logic_vector
 	  );
 	end component;
 
