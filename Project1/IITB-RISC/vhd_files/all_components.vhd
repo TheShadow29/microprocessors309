@@ -98,5 +98,16 @@ package all_components is
 		 data  : inout  std_logic_vector
 	  );
 	end component;
+	
+	component control_path is
+		port
+		(
+			state_signals : in std_logic_vector(19 downto 0);
+			transition_signals : out std_logic_vector(19 downto 0);
+			clk, reset : in std_logic;
+			start : in std_logic_vector;
+			done : out std_logic_vector
+		);
+	end component;
 
 end all_components;
