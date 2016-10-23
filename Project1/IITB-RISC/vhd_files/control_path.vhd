@@ -23,6 +23,10 @@ entity control_path is
 		do_mux_c : out std_logic;
 		do_w_c : out std_logic;
 		tx_mux_c : out std_logic_vector(1 downto 0);
+		do_xor_c : out std_logic;
+		car_w_c : out std_logic;
+		zer_w_c : out std_logic;
+		uc_w_c : out std_logic;
 		clk, reset : in std_logic;
 		op_code : in std_logic_vector(3 downto 0);
 		condition_code : in std_logic_vector(1 downto 0);
@@ -82,8 +86,14 @@ begin
 		variable do_mux_var : std_logic;
 		variable do_w_var : std_logic;
 		variable tx_mux_var : std_logic_vector(1 downto 0);
+		variable do_xor_var : std_logic;
+		variable car_w_var : std_logic;
+		variable zer_w_var: std_logic;
+		variable uc_w_var : std_logic;
 		begin
 			next_state := curr_state;
+			car_w_var := '0';
+			zer_w_var := '0';
 			--done_var := '0';
 			a1_mux_var := (others => '0');
 			a2_mux_var := '0';
@@ -99,6 +109,8 @@ begin
 			ir_w_var := '0';
 			tx_mux_var := "00";
 			alu_c_var := '1';
+			do_xor_var := '0';
+			uc_w_var := '0';
 			
 			
 			case curr_state is
@@ -143,8 +155,9 @@ begin
 					t1_mux_var := '1';	--d1 -> t1
 					t2_mux_var := "100";	--d2 -> t2
 					next_state := s2;
-					if (op_code = "1100") then
+					if (op_code = "1100") then	--beq
 						next_state := s6;
+						
 					end if;
 					
 				when s2 =>
@@ -155,9 +168,12 @@ begin
 					--need state_signals to decide next state
 					if (op_code = "0000") then--add
 						alu_c_var := '0';
+						car_w_var := '1';
+						zer_w_var := '1';
 						next_state := s3;
 					elsif (op_code = "0010") then--nand
 						alu_c_var := '1';
+						zer_w_var := '1';
 						next_state := s3;
 					elsif(op_code = "0001") then--adi
 						next_state := s8;
@@ -212,10 +228,14 @@ begin
 					
 				when s6 =>
 					t3_w_var := '1';
-					next_state := s4;
+					next_state := s4;					
 					if (op_code = "1100") then--beq
 						next_state := s5;
+						do_xor_var := '1';
+					elsif (op_code = "0001") then
+						alu_c_var := '1';
 					elsif (op_code = "0110") then--lm
+						alu_c_var := '0';
 						next_state := s11;
 					end if;
 				
@@ -265,11 +285,12 @@ begin
 					t1_mux_var := '1'; --d1 -> t1
 					t2_mux_var := "010"; --6bi -> t2
 					do_mux_var := '1';	--d2 ->d0
+					do_w_var := '1'; --enable write signal on do
 					next_state := s2;
 				
 				when s14 =>
 					a0_mux_var := "11"; --t3 -> a0
-					do_w_var := '1'; 	--do -> edb
+					uc_w_var := '1'; 	--do -> edb
 					t3_w_var := '1';	--alu -t3
 					next_state := s4;
 				
@@ -341,11 +362,12 @@ begin
 					t3_w_var := '1';
 					a1_mux_var := "00"; -- LO -> a1
 					do_mux_var := '0';
+					do_w_var := '1';	--enable write signal on do
 					next_state := s24;
 					
 				when s24 =>
 					a0_mux_var := "11"; --t3 -> a0
-					do_w_var := '1';	--do -> edb
+					uc_w_var := '1';	--do -> edb
 					tx_mux_var := "11"; --tn -> tx
 					if (V = '0') then
 						next_state := s5;
@@ -371,6 +393,10 @@ begin
 			do_mux_c <= do_mux_var;
 			do_w_c <= do_w_var;
 			tx_mux_c <= tx_mux_var;
+			do_xor_c <= do_xor_var;
+			car_w_c <= car_w_var;
+			zer_w_c <= zer_w_var;
+			uc_w_c <= uc_w_var;
 			if(clk'event and (clk = '1')) then
 				if(reset = '1') then
            		  curr_state <= s0;

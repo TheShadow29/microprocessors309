@@ -13,14 +13,15 @@ entity alu is
 		X, Y : in std_logic_vector(15 downto 0);
 		out_p : out std_logic_vector(15 downto 0);
 		C, Z : out std_logic;
-		op_code : in std_logic 
+		op_code : in std_logic;
+		do_xor : in std_logic
 	);
 end alu;
 
 architecture implementation of alu is 
 	signal lsb , msb : std_logic;
 	signal x16, y16, tmp0: std_logic_vector(16 downto 0) := (others => '0');
-	signal tmp1, tmp2, sigout : std_logic_vector(15 downto 0);
+	signal tmp1, tmp2, sigout, xor_out : std_logic_vector(15 downto 0);
 	
 begin 
 	--lsb <= op_code(0);
@@ -52,8 +53,8 @@ begin
 			sigout(13) or
 			sigout(14) or
 			sigout(15));
-			
-	out_p <= sigout;
+	xor_out <= X xor Y;
+	out_p <= sigout when (do_xor = '0') else xor_out;
 	
 	final: mux2 port map (A0 => tmp1, A1 => tmp2 , s => op_code , D => sigout);
 

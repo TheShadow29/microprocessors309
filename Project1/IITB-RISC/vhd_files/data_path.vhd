@@ -25,8 +25,16 @@ entity data_path is
 		do_w_c : in std_logic;
 		d3_mux_c : in std_logic_vector(1 downto 0);
 		tx_mux_c : in std_logic_vector(1 downto 0);
+		car_w_c : in std_logic;
+		zer_w_c : in std_logic;
+		do_xor_c : in std_logic;
+		carry_flag : out std_logic;
+		zero_flag : out std_logic;
 		alu_op_code : in std_logic;
 		clk, reset : in std_logic;
+		uc_rw_c : in std_logic;
+		op_code : out std_logic_vector(3 downto 0);
+		condition_code : out std_logic_vector(1 downto 0);
 		N : out std_logic
 	);
 end entity;
@@ -55,6 +63,8 @@ architecture data of data_path is
 			 ir_w,T_w: std_logic := '0';
 			 
 	signal ra,rb,rc: std_logic_vector(2 downto 0);
+	--signal carry_flag, zero_flag: std_logic;
+	signal car_w, zer_w : std_logic;
 	
 	signal do_c,ao_c,T_c, a2_c, t1_c: std_logic;
 	signal a1_c : std_logic_vector(1 downto 0);
@@ -72,7 +82,7 @@ architecture data of data_path is
 begin
 
 -- Components
-alu1: alu port map(X=>alui1,Y=>alui2,out_p=>aluo,op_code=>aluc,C=>C,Z=>Z);
+alu1: alu port map(X=>alui1,Y=>alui2,out_p=>aluo,op_code=>aluc,do_xor => do_xor_c, C=>C,Z=>Z);
 regfile1: RegFile port map(D1=>D1, D2=>D2, D3=>D3, A1=>A1, A2=>A2, A3=>A3, clk=>clk, WR=>RF_WE);
 pri_enc : PriorityEncoder port map(x => T_out, s=>pe,N => N, Tn=>Tn);
 mem : memory_model port map (clk => clk, rw => mem_rw, address => mem_addr, data => mem_data);
@@ -93,6 +103,9 @@ do: DataRegister port map (Din=>do_in,Dout=>edb,enable=>do_w,clk=>clk);
 ao: DataRegister port map (Din=>ao_in,Dout=>eab,enable=>ao_w,clk=>clk);
 ir: DataRegister port map (Din=>edb,Dout=>ir_out,enable=>ir_w,clk=>clk);
 
+c1: data_register_bin port map (Din => C, Dout => carry_flag, enable => car_w, clk => clk);
+z1: data_register_bin port map (Din => Z, Dout => zero_flag, enable => zer_w, clk => clk);
+
 -- Data path connection muxes
 ra<=ir_out(11 downto 9);
 rb<=ir_out(8 downto 6);
@@ -101,6 +114,11 @@ nine_bit_high(15 downto 7) <= ir_out(8 downto 0);
 
 
 aluc <= alu_op_code;
+car_w <= car_w_c;
+zer_w <= zer_w_c;
+
+op_code <= ir_out(15 downto 12);
+condition_code <= ir_out(1 downto 0);
 
 a1_mux: mux4 port map 
 			(A0=>pe ,A1=>rb,A2 =>ra, A3 => const_7,
@@ -181,4 +199,5 @@ T_w <= tx_mux_c(1);
 di_w <= di_w_c; -- edb -> di
 --ir_w <= control_vector(19); -- edb -> ir
 ir_w <= ir_w_c;
+uc_rw <= uc_rw_c;
 end architecture;

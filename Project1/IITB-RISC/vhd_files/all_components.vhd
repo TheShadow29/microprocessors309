@@ -48,13 +48,14 @@ package all_components is
 	end component Decoder8;
 	
 	component alu is
-		port
-		(
-			X, Y : in std_logic_vector(15 downto 0);
-			out_p : out std_logic_vector(15 downto 0);
-			C, Z : out std_logic;
-			op_code : in std_logic 
-		);
+	port
+	(
+		X, Y : in std_logic_vector(15 downto 0);
+		out_p : out std_logic_vector(15 downto 0);
+		C, Z : out std_logic;
+		op_code : in std_logic;
+		do_xor : in std_logic
+	);
 	end component;
 	
 	component DataRegister is
@@ -62,6 +63,12 @@ package all_components is
 		port (Din: in std_logic_vector;
 				Dout: out std_logic_vector;
 				clk, enable: in std_logic);
+	end component;
+	
+	component data_register_bin is
+	port (Din: in std_logic;
+	      Dout: out std_logic;
+	      clk, enable: in std_logic);
 	end component;
 	
 	component RegFile is
@@ -116,6 +123,10 @@ package all_components is
 		do_mux_c : out std_logic;
 		do_w_c : out std_logic;
 		tx_mux_c : out std_logic_vector(1 downto 0);
+		do_xor_c : out std_logic;
+		car_w_c : out std_logic;
+		zer_w_c : out std_logic;
+		uc_w_c : out std_logic;
 		clk, reset : in std_logic;
 		op_code : in std_logic_vector(3 downto 0);
 		condition_code : in std_logic_vector(1 downto 0);
@@ -146,8 +157,16 @@ package all_components is
 		do_w_c : in std_logic;
 		d3_mux_c : in std_logic_vector(1 downto 0);
 		tx_mux_c : in std_logic_vector(1 downto 0);
+		car_w_c : in std_logic;
+		zer_w_c : in std_logic;
+		do_xor_c : in std_logic;
+		carry_flag : out std_logic;
+		zero_flag : out std_logic;
 		alu_op_code : in std_logic;
 		clk, reset : in std_logic;
+		uc_rw_c : in std_logic;
+		op_code : out std_logic_vector(3 downto 0);
+		condition_code : out std_logic_vector(1 downto 0);
 		N : out std_logic
 	);
 	end component;
