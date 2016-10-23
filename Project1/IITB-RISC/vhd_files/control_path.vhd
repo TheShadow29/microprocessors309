@@ -9,14 +9,12 @@ use work.all_components.all;
 entity control_path is
 	port
 	(
-		state_signals : in std_logic_vector(19 downto 0);
-		transition_signals : out std_logic_vector(19 downto 0);
 		alu_control : out std_logic;
 		a1_mux_c : out std_logic_vector(1 downto 0);
 		a2_mux_c : out std_logic;
 		a3_mux_c : out std_logic_vector(2 downto 0);
 		t1_mux_c : out std_logic;
-		t2_mux_c : out std_logic(2 downto 0);
+		t2_mux_c : out std_logic_vector(2 downto 0);
 		t3_w_c : out std_logic;
 		d3_mux_c : out std_logic_vector(1 downto 0);
 		a0_mux_c : out std_logic_vector(1 downto 0);
@@ -28,11 +26,11 @@ entity control_path is
 		clk, reset : in std_logic;
 		op_code : in std_logic_vector(3 downto 0);
 		condition_code : in std_logic_vector(1 downto 0);
-		
+		V : in std_logic;
 		carry_flag : in std_logic;
 		zero_flag : in std_logic;
-		start : in std_logic_vector;
-		done : out std_logic_vector
+		start : in std_logic;
+		done : out std_logic
 	);
 end entity;
 
@@ -66,7 +64,7 @@ architecture control of control_path is
 		
 	signal curr_state : fsm_state;
 begin
-	process(curr_state, state_signals, clk, reset)
+	process(curr_state, zero_flag, carry_flag, clk, reset, V, op_code, condition_code)
 		variable next_state : fsm_state;
 		--variable Tvar : std_logic_vector(19 downto 0);
 		variable a1_mux_var : std_logic_vector(1 downto 0);
@@ -75,7 +73,7 @@ begin
 		variable t1_mux_var : std_logic;
 		variable t2_mux_var : std_logic_vector(2 downto 0);
 		variable t3_w_var : std_logic;
-		variable d3_mux_var : std_logic_vector(2 downto 0);
+		variable d3_mux_var : std_logic_vector(1 downto 0);
 		variable a0_mux_var : std_logic_vector(1 downto 0);
 		variable done_var : std_logic;
 		variable alu_c_var : std_logic;
@@ -85,7 +83,6 @@ begin
 		variable do_w_var : std_logic;
 		variable tx_mux_var : std_logic_vector(1 downto 0);
 		begin
-			Tvar := (others => '0');
 			next_state := curr_state;
 			--done_var := '0';
 			a1_mux_var := (others => '0');
@@ -98,7 +95,7 @@ begin
 			d3_mux_var := (others => '0');
 			di_w_var := '0';
 			do_w_var := '0';
-			do_mux_var := "00";
+			do_mux_var := '0';
 			ir_w_var := '0';
 			tx_mux_var := "00";
 			alu_c_var := '1';
@@ -106,7 +103,7 @@ begin
 			
 			case curr_state is
 				when s0 =>
-					if (op_code = "0000" or "0010") then
+					if (op_code = "0000" or op_code = "0010") then
 						if (condition_code = "00") then
 							next_state := s1;
 						elsif (condition_code="01") then
@@ -132,6 +129,10 @@ begin
 						next_state := s13;
 					elsif (op_code = "1100") then--BEq
 						next_state := s1;
+					elsif (op_code = "1000" or op_code = "1001") then --JAL or JLR
+						next_state := s5;
+					elsif (op_code = "0110" or op_code = "0111") then --LM or SM
+						next_state := s20;
 					end if;
 					next_state := s1;
 					
@@ -338,7 +339,7 @@ begin
 					
 				when s23 =>
 					t3_w_var := '1';
-					a1_mux := "00"; -- LO -> a1
+					a1_mux_var := "00"; -- LO -> a1
 					do_mux_var := '0';
 					next_state := s24;
 					

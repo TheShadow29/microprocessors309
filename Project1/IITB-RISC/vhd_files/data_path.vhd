@@ -9,14 +9,16 @@ use work.all_components.all;
 entity data_path is
 	port 
 	(
-		transition_signals : in std_logic_vector(19 downto 0);
+		prog_en: in std_logic;
+		prog_addr: in std_logic_vector(15 downto 0);
+		prog_data: in std_logic_vector(15 downto 0);
 		a1_mux_c : in std_logic_vector(1 downto 0);
 		a2_mux_c : in std_logic;
 		a3_mux_c : in std_logic_vector(2 downto 0);
 		t1_mux_c : in std_logic;
 		t2_mux_c : in std_logic_vector(2 downto 0);
 		t3_w_c : in std_logic;
-		a0_mux_c : in std_logic;
+		a0_mux_c : in std_logic_vector(1 downto 0);
 		ir_w_c : in std_logic;
 		di_w_c : in std_logic;
 		do_mux_c : in std_logic;
@@ -24,9 +26,8 @@ entity data_path is
 		d3_mux_c : in std_logic_vector(1 downto 0);
 		tx_mux_c : in std_logic_vector(1 downto 0);
 		alu_op_code : in std_logic;
-		state_signals : out std_logic_vector(19 downto 0);
-		clk, reset : in std_logic
-		
+		clk, reset : in std_logic;
+		N : out std_logic
 	);
 end entity;
 
@@ -39,7 +40,6 @@ architecture data of data_path is
 	signal RF_WE: std_logic;
 		
 	signal pe: std_logic_vector(2 downto 0);
-	signal N: std_logic;
 		
 	signal mem_addr,mem_data, eab,edb: std_logic_vector(15 downto 0);
 	signal mem_rw, uc_rw: std_logic;
@@ -56,18 +56,19 @@ architecture data of data_path is
 			 
 	signal ra,rb,rc: std_logic_vector(2 downto 0);
 	
-	signal do_c,ao_c,T_c: std_logic;
-	signal a1_c,a2_c : std_logic_vector(1 downto 0);
-	signal a3_c,d3_c,t1_c: std_logic_vector(1 downto 0);
-	signal t2_c : std_logic_vector(2 downto 0);
+	signal do_c,ao_c,T_c, a2_c, t1_c: std_logic;
+	signal a1_c : std_logic_vector(1 downto 0);
+	signal d3_c: std_logic_vector(1 downto 0);
+	signal a3_c, t2_c : std_logic_vector(2 downto 0);
 	
-	signal zero: std_logic_vector(15 downto 0) := (others=>'0');
-	signal nine_bit_high : std_logic_vector(15 downto 0);
-	signal const_7 : std_logic_vector(2 downto 0):= (others => '1');
+	constant zero: std_logic_vector(15 downto 0) := (others=>'0');
+	signal nine_bit_high : std_logic_vector(15 downto 0) := (others => '0');
+	constant const_7 : std_logic_vector(2 downto 0):= (others => '1');
 	
-	signal const_1_16bit : std_logic_vector(15 downto 0) := (0 => '1', others => '1');
+	constant const_1_16bit : std_logic_vector(15 downto 0) := (0 => '1', others => '1');
+	constant zero_3_bit : std_logic_vector(2 downto 0) := (others => '0');
 
-	signal highZ : std_logic_vector(2 downto 0) := (others => 'Z');
+	constant highZ : std_logic_vector(2 downto 0) := (others => 'Z');
 begin
 
 -- Components
@@ -96,7 +97,7 @@ ir: DataRegister port map (Din=>mem_data,Dout=>ir_out,enable=>ir_w,clk=>clk);
 ra<=ir_out(11 downto 9);
 rb<=ir_out(8 downto 6);
 rc<=ir_out(5 downto 3);
-nine_bit_high(15 downto 6) <= ir(8 downto 0);
+nine_bit_high(15 downto 7) <= ir_out(8 downto 0);
 
 
 aluc <= alu_op_code;
@@ -114,7 +115,7 @@ a2_c <= a2_mux_c;
 
 
 a3_mux: mux8 port map
-			(A0=>ra,A1=>rb,A2=>rc,A3=>const_7,A4 => pe, A5 => zero, A6 => zero, A7 => zero,
+			(A0=>ra,A1=>rb,A2=>rc,A3=>const_7,A4 => pe, A5 => zero_3_bit, A6 => zero_3_bit, A7 => zero_3_bit,
 			 s=>a3_c,
 			 D=>a3);
 a3_c <= a3_mux_c;
@@ -140,6 +141,8 @@ t1_w <= t1_mux_c;
 
 t2_mux: mux8 port map
 			(
+				A7 => zero,
+				A6 => zero,
 				A5=>std_logic_vector(resize(unsigned(pe),16)),
 				A4 => d2, 
 				A3 => const_1_16bit, 

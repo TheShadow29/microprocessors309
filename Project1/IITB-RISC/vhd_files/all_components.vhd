@@ -100,14 +100,56 @@ package all_components is
 	end component;
 	
 	component control_path is
-		port
-		(
-			state_signals : in std_logic_vector(19 downto 0);
-			transition_signals : out std_logic_vector(19 downto 0);
-			clk, reset : in std_logic;
-			start : in std_logic_vector;
-			done : out std_logic_vector
-		);
+	port
+	(
+		alu_control : out std_logic;
+		a1_mux_c : out std_logic_vector(1 downto 0);
+		a2_mux_c : out std_logic;
+		a3_mux_c : out std_logic_vector(2 downto 0);
+		t1_mux_c : out std_logic;
+		t2_mux_c : out std_logic_vector(2 downto 0);
+		t3_w_c : out std_logic;
+		d3_mux_c : out std_logic_vector(1 downto 0);
+		a0_mux_c : out std_logic_vector(1 downto 0);
+		ir_w_c : out std_logic;
+		di_w_c : out std_logic;
+		do_mux_c : out std_logic;
+		do_w_c : out std_logic;
+		tx_mux_c : out std_logic_vector(1 downto 0);
+		clk, reset : in std_logic;
+		op_code : in std_logic_vector(3 downto 0);
+		condition_code : in std_logic_vector(1 downto 0);
+		V : in std_logic;
+		carry_flag : in std_logic;
+		zero_flag : in std_logic;
+		start : in std_logic;
+		done : out std_logic
+	);
+	end component;
+	
+	component data_path is
+	port 
+	(
+		prog_en: in std_logic;
+		prog_addr: in std_logic_vector(15 downto 0);
+		prog_data: in std_logic_vector(15 downto 0);
+		a1_mux_c : in std_logic_vector(1 downto 0);
+		a2_mux_c : in std_logic;
+		a3_mux_c : in std_logic_vector(2 downto 0);
+		t1_mux_c : in std_logic;
+		t2_mux_c : in std_logic_vector(2 downto 0);
+		t3_w_c : in std_logic;
+		a0_mux_c : in std_logic_vector(1 downto 0);
+		ir_w_c : in std_logic;
+		di_w_c : in std_logic;
+		do_mux_c : in std_logic;
+		do_w_c : in std_logic;
+		d3_mux_c : in std_logic_vector(1 downto 0);
+		tx_mux_c : in std_logic_vector(1 downto 0);
+		alu_op_code : in std_logic;
+		clk, reset : in std_logic;
+		N : out std_logic
+	);
 	end component;
 
 end all_components;
