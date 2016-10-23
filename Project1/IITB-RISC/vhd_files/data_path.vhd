@@ -88,10 +88,10 @@ t2: DataRegister port map (Din=>t2_in,Dout=>alui2,enable=>t2_w,clk=>clk);
 t3: DataRegister port map (Din=>aluo,Dout=>t3_out,enable=>t3_w,clk=>clk);
 T: DataRegister port map (Din=>T_in,Dout=>T_out,enable=>T_w,clk=>clk);
 
-di: DataRegister port map (Din=>mem_data,Dout=>di_out,enable=>di_w,clk=>clk);
+di: DataRegister port map (Din=>edb,Dout=>di_out,enable=>di_w,clk=>clk);
 do: DataRegister port map (Din=>do_in,Dout=>edb,enable=>do_w,clk=>clk);
 ao: DataRegister port map (Din=>ao_in,Dout=>eab,enable=>ao_w,clk=>clk);
-ir: DataRegister port map (Din=>mem_data,Dout=>ir_out,enable=>ir_w,clk=>clk);
+ir: DataRegister port map (Din=>edb,Dout=>ir_out,enable=>ir_w,clk=>clk);
 
 -- Data path connection muxes
 ra<=ir_out(11 downto 9);
