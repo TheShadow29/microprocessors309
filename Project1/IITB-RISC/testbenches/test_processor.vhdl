@@ -103,7 +103,7 @@ begin
         then
 				test_en <= '1';
 				prog_data_w <= highZ;
-				wait until clk = '1';
+				wait until clk = '0';
             for i in 0 to 15 loop
               if (prog_data_r(i) /= to_std_logic(input_data(i))) then
                      write(OUTPUT_LINE,to_string("ERROR: in Checking Data, line "));
