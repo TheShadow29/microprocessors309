@@ -89,7 +89,7 @@ package all_components is
 	
 	component iitb_risc is
 		port (
-			prog_en: in std_logic;
+			prog_en,test_en: in std_logic;
 			prog_addr: in std_logic_vector(15 downto 0);
 			prog_data: inout std_logic_vector(15 downto 0);
 			
@@ -142,7 +142,7 @@ package all_components is
 	component data_path is
 	port 
 	(
-		prog_en: in std_logic;
+		prog_en,test_en: in std_logic;
 		prog_addr: in std_logic_vector(15 downto 0);
 		prog_data: inout std_logic_vector(15 downto 0);
 		a1_mux_c : in std_logic_vector(1 downto 0);

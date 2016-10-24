@@ -9,7 +9,7 @@ use work.all_components.all;
 entity data_path is
 	port 
 	(
-		prog_en: in std_logic;
+		prog_en,test_en: in std_logic;
 		prog_addr: in std_logic_vector(15 downto 0);
 		prog_data: inout std_logic_vector(15 downto 0);
 		a1_mux_c : in std_logic_vector(1 downto 0);
@@ -88,8 +88,11 @@ pri_enc : PriorityEncoder port map(x => T_out, s=>pe,N => N, Tn=>Tn);
 mem : memory_model port map (clk => clk, rw => mem_rw, address => mem_addr, data => mem_data);
 
 -- Program mode muxes
-mem_addr_mux: mux2 port map (A0=>eab,A1=>prog_addr,s=>prog_en,D=>mem_addr);
+--mem_addr_mux: mux2 port map (A0=>eab,A1=>prog_addr,s=>prog_en,D=>mem_addr);
 --mem_data_mux: mux4 port map (A0=>edb,A1=>prog_data,A2=>highZ,A3=>highZ,s=>mem_data_c,D=>mem_data);
+
+mem_addr <= prog_addr when prog_en = '1' or test_en = '1' 
+				else eab;
 
 edb_r <= mem_data;
 prog_data <= mem_data when prog_en='0' else highZ;

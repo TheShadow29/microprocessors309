@@ -68,7 +68,8 @@ architecture control of control_path is
 		s24,
 		s25,
 		s26,
-		s27);
+		s27,
+		s28);
 		
 	signal curr_state : fsm_state := rst;
 begin
@@ -253,7 +254,7 @@ begin
 						alu_c_var := '0';
 					elsif (op_code = "0110") then--lm
 						alu_c_var := '0';
-						next_state := s11;
+						next_state := s4;
 					elsif (op_code = "0100") then --lw
 						alu_c_var := '0';
 						zer_w_var := '1';
@@ -356,11 +357,7 @@ begin
 					
 				when s20 => 
 					tx_mux_var := "10"; --ir -> tx
-					if (V = '0') then
-						next_state := s5;
-					else
-						next_state := s21;
-					end if;
+					next_state := s28;
 				
 				when s21 => 
 					t2_mux_var:= "101"; --LO16 -> t2
@@ -376,12 +373,7 @@ begin
 					a3_mux_var := "100"; --lo -> a3
 					d3_mux_var := "01"; --di -> d3
 					tx_mux_var := "11";	--tnx -> tx
-					
-					if (V = '0') then
-						next_state := s5;
-					else
-						next_state := s21;
-					end if;
+					next_state := s28;
 					
 				when s23 =>
 					t3_w_var := '1';
@@ -394,11 +386,7 @@ begin
 					a0_mux_var := "11"; --t3 -> a0
 					uc_w_var := '1';	--do -> edb
 					tx_mux_var := "11"; --tn -> tx
-					if (V = '0') then
-						next_state := s5;
-					else
-						next_state := s21;
-					end if;
+					next_state := s28;
 					
 				when s25 =>
 					a0_mux_var := "11";	--t3 -> a0
@@ -412,9 +400,16 @@ begin
 					t3_w_var := '1';
 					next_state := s4;	
 					
-				when s27 =>
+				when s27 => -- ALU lm/sm
 					t3_w_var := '1';
-					next_state := s11;			
+					next_state := s11;	
+					
+				when s28 => -- branch lm/sm
+					if (V = '0') then
+						next_state := s5;
+					else
+						next_state := s21;
+					end if;
 					
 			end case;
 			

@@ -32,7 +32,7 @@ architecture Behave of TestProcessor is
   end to_string;
 
   signal prog_addr,prog_data_w,prog_data_r,prog_data : std_logic_vector(15 downto 0);
-  signal prog_en,proc_start,proc_done,proc_reset : std_logic;
+  signal prog_en,test_en,proc_start,proc_done,proc_reset : std_logic;
   signal clk : std_logic := '0';
   
   
@@ -58,9 +58,10 @@ begin
   begin
     proc_start <= '0';
 	 prog_en <= '1';
+	 test_en <= '0';
 
     proc_reset<='1';
-    wait until clk = '1';
+    wait until clk = '0';
     proc_reset<='0';
 
     while not endfile(INFILE) loop 
@@ -100,12 +101,14 @@ begin
 
         if mode = '1'
         then
+				test_en <= '1';
 				prog_data_w <= highZ;
+				wait until clk = '1';
             for i in 0 to 15 loop
               if (prog_data_r(i) /= to_std_logic(input_data(i))) then
                      write(OUTPUT_LINE,to_string("ERROR: in Checking Data, line "));
-                     write(OUTPUT_LINE, i);
-                 write(OUTPUT_LINE, LINE_COUNT);
+                     --write(OUTPUT_LINE, i);
+							write(OUTPUT_LINE, LINE_COUNT);
                      writeline(OUTFILE, OUTPUT_LINE);
                      err_flag := true;
               end if;
@@ -122,7 +125,7 @@ begin
 
   prog_data <= prog_data_w;
   prog_data_r <= prog_data;
-  dut : iitb_risc port map (prog_en=>prog_en,prog_addr=>prog_addr,prog_data=>prog_data,
+  dut : iitb_risc port map (prog_en=>prog_en,test_en=>test_en,prog_addr=>prog_addr,prog_data=>prog_data,
                             start=>proc_start, done=>proc_done, clk=>clk, reset=>proc_reset);
 
 end Behave;

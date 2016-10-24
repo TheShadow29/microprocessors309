@@ -8,7 +8,7 @@ use work.all_components.all;
 
 entity iitb_risc is
 	port (
-		prog_en: in std_logic;
+		prog_en,test_en: in std_logic;
 		prog_addr: in std_logic_vector(15 downto 0);
 		prog_data: inout std_logic_vector(15 downto 0);
 				
@@ -61,6 +61,7 @@ dp1 : data_path port map
 			prog_addr => prog_addr,
 			prog_data => prog_data, 
 			prog_en => prog_en,
+			test_en => test_en,
 			carry_flag => carry_flag,
 			zero_flag => zero_flag,
 			op_code => op_code,

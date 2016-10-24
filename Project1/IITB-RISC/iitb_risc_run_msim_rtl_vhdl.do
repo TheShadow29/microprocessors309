@@ -22,33 +22,33 @@ vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project
 
 vsim -t 1ps -L altera -L lpm -L sgate -L altera_mf -L altera_lnsim -L cycloneiv_hssi -L cycloneiv_pcie_hip -L cycloneiv -L rtl_work -L work -voptargs="+acc"  TestProcessor
 
-add wave *
+add wave -position insertpoint sim:/testprocessor/dut/cp/curr_state
 add wave -position insertpoint sim:/testprocessor/dut/dp1/ir/Dout
-add wave -position insertpoint sim:/testprocessor/dut/dp1/ir/Din
-add wave -position insertpoint sim:/testprocessor/dut/dp1/ir/enable
-add wave -position insertpoint sim:/testprocessor/dut/dp1/do/Dout
-add wave -position insertpoint sim:/testprocessor/dut/dp1/do/Din
-add wave -position insertpoint sim:/testprocessor/dut/dp1/do/enable
+add wave -position insertpoint sim:/testprocessor/dut/dp1/eab
+add wave -position insertpoint sim:/testprocessor/dut/dp1/pri_enc/*
 
 add wave -position insertpoint sim:/testprocessor/dut/dp1/c1/Dout
 add wave -position insertpoint sim:/testprocessor/dut/dp1/z1/Dout
 
 add wave -position insertpoint sim:/testprocessor/dut/dp1/mem/address
 add wave -position insertpoint sim:/testprocessor/dut/dp1/mem/data
-add wave -position insertpoint sim:/testprocessor/dut/dp1/mem/ram(256)
-add wave -position insertpoint sim:/testprocessor/dut/dp1/mem/ram(257)
-add wave -position insertpoint sim:/testprocessor/dut/dp1/mem/ram(258)
-add wave -position insertpoint sim:/testprocessor/dut/dp1/mem/ram(259)
-add wave -position insertpoint sim:/testprocessor/dut/dp1/mem/ram(260)
-add wave -position insertpoint sim:/testprocessor/dut/dp1/mem/ram(261)
-add wave -position insertpoint sim:/testprocessor/dut/dp1/mem/ram(262)
-add wave -position insertpoint sim:/testprocessor/dut/dp1/mem/ram(263)
-add wave -position insertpoint sim:/testprocessor/dut/dp1/uc_rw
+
 add wave -position insertpoint sim:/testprocessor/dut/dp1/mem_rw
-add wave -position insertpoint sim:/testprocessor/dut/cp/curr_state
-add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/*
 
+add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/R(0)
+add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/R(1)
+add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/R(2)
+add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/R(3)
+add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/R(4)
+add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/R(5)
+add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/R(6)
+add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/R(7)
+add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/D1
+add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/D2
+add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/D3
+add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/A1
+add wave -position insertpoint sim:/testprocessor/dut/dp1/regfile1/A2
 
-view structure
+view structures
 view signals
-run -all
+run 3 us

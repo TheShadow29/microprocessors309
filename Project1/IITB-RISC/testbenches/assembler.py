@@ -289,4 +289,5 @@ for num, token in enumerate(tokens):
 # Write the hex output to a file
 f = open(sys.argv[2], 'w')
 f.write(output)
+f.write("\n");
 f.close()
