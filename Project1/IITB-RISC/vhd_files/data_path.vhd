@@ -11,7 +11,7 @@ entity data_path is
 	(
 		prog_en: in std_logic;
 		prog_addr: in std_logic_vector(15 downto 0);
-		prog_data: in std_logic_vector(15 downto 0);
+		prog_data: inout std_logic_vector(15 downto 0);
 		a1_mux_c : in std_logic_vector(1 downto 0);
 		a2_mux_c : in std_logic;
 		a3_mux_c : in std_logic_vector(2 downto 0);
@@ -49,7 +49,7 @@ architecture data of data_path is
 		
 	signal pe: std_logic_vector(2 downto 0);
 		
-	signal mem_addr,mem_data, eab,edb: std_logic_vector(15 downto 0);
+	signal mem_addr,mem_data,mem_data_temp,eab,edb_w, edb_r: std_logic_vector(15 downto 0);
 	signal mem_rw, uc_rw: std_logic;
 	
 	signal t1_in,t2_in,t3_in,t3_out,
@@ -68,17 +68,17 @@ architecture data of data_path is
 	
 	signal do_c,ao_c,T_c, a2_c, t1_c: std_logic;
 	signal a1_c : std_logic_vector(1 downto 0);
-	signal d3_c: std_logic_vector(1 downto 0);
+	signal d3_c, mem_data_c: std_logic_vector(1 downto 0);
 	signal a3_c, t2_c : std_logic_vector(2 downto 0);
 	
 	constant zero: std_logic_vector(15 downto 0) := (others=>'0');
-	signal nine_bit_high : std_logic_vector(15 downto 0) := (others => '0');
+	signal nine_bit_high, nine_bit_imm, six_bit_imm, pe_16 : std_logic_vector(15 downto 0) := (others => '0');
 	constant const_7 : std_logic_vector(2 downto 0):= (others => '1');
 	
-	constant const_1_16bit : std_logic_vector(15 downto 0) := (0 => '1', others => '1');
+	constant const_1_16bit : std_logic_vector(15 downto 0) := (0 => '1', others => '0');
 	constant zero_3_bit : std_logic_vector(2 downto 0) := (others => '0');
 
-	constant highZ : std_logic_vector(2 downto 0) := (others => 'Z');
+	constant highZ : std_logic_vector(15 downto 0) := (others => 'Z');
 begin
 
 -- Components
@@ -89,7 +89,14 @@ mem : memory_model port map (clk => clk, rw => mem_rw, address => mem_addr, data
 
 -- Program mode muxes
 mem_addr_mux: mux2 port map (A0=>eab,A1=>prog_addr,s=>prog_en,D=>mem_addr);
-mem_data_mux: mux2 port map (A0=>edb,A1=>prog_data,s=>prog_en,D=>mem_data);
+--mem_data_mux: mux4 port map (A0=>edb,A1=>prog_data,A2=>highZ,A3=>highZ,s=>mem_data_c,D=>mem_data);
+
+edb_r <= mem_data;
+prog_data <= mem_data when prog_en='0' else highZ;
+mem_data <= edb_w when uc_rw = '1' and prog_en = '0'
+            else prog_data when uc_rw = '0' and prog_en = '1'
+				else highZ;
+
 mem_rw <= prog_en or uc_rw; -- Mux hai
 
 -- Registers
@@ -98,10 +105,10 @@ t2: DataRegister port map (Din=>t2_in,Dout=>alui2,enable=>t2_w,clk=>clk);
 t3: DataRegister port map (Din=>aluo,Dout=>t3_out,enable=>t3_w,clk=>clk);
 T: DataRegister port map (Din=>T_in,Dout=>T_out,enable=>T_w,clk=>clk);
 
-di: DataRegister port map (Din=>edb,Dout=>di_out,enable=>di_w,clk=>clk);
-do: DataRegister port map (Din=>do_in,Dout=>edb,enable=>do_w,clk=>clk);
+di: DataRegister port map (Din=>edb_r,Dout=>di_out,enable=>di_w,clk=>clk);
+do: DataRegister port map (Din=>do_in,Dout=>edb_w,enable=>do_w,clk=>clk);
 ao: DataRegister port map (Din=>ao_in,Dout=>eab,enable=>ao_w,clk=>clk);
-ir: DataRegister port map (Din=>edb,Dout=>ir_out,enable=>ir_w,clk=>clk);
+ir: DataRegister port map (Din=>edb_r,Dout=>ir_out,enable=>ir_w,clk=>clk);
 
 c1: data_register_bin port map (Din => C, Dout => carry_flag, enable => car_w, clk => clk);
 z1: data_register_bin port map (Din => Z, Dout => zero_flag, enable => zer_w, clk => clk);
@@ -111,6 +118,9 @@ ra<=ir_out(11 downto 9);
 rb<=ir_out(8 downto 6);
 rc<=ir_out(5 downto 3);
 nine_bit_high(15 downto 7) <= ir_out(8 downto 0);
+nine_bit_imm(8 downto 0) <= ir_out(8 downto 0);
+six_bit_imm(5 downto 0) <= ir_out(5 downto 0);
+pe_16(2 downto 0) <= pe;
 
 
 aluc <= alu_op_code;
@@ -161,11 +171,11 @@ t2_mux: mux8 port map
 			(
 				A7 => zero,
 				A6 => zero,
-				A5=>std_logic_vector(resize(unsigned(pe),16)),
+				A5 => pe_16,
 				A4 => d2, 
 				A3 => const_1_16bit, 
-				A2 => std_logic_vector(resize(unsigned(ir_out(5 downto 0)),16)),
-				A1 => std_logic_vector(resize(unsigned(ir_out(8 downto 0)),16)),
+				A2 => six_bit_imm,
+				A1 => nine_bit_imm,
 				A0 => zero, 
 				s => t2_c,
 				D => t2_in

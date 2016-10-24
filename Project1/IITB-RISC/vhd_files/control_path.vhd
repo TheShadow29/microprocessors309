@@ -40,7 +40,8 @@ end entity;
 
 architecture control of control_path is
 	type fsm_state is 
-		(s0,	
+		(rst,
+		s0,	
 		s1,	-- ra -> a1, rb -> a2, d1 -> t1, d2 -> t2
 		s2,
 		s3,
@@ -66,9 +67,9 @@ architecture control of control_path is
 		s23,
 		s24);
 		
-	signal curr_state : fsm_state;
+	signal curr_state : fsm_state := rst;
 begin
-	process(curr_state, zero_flag, carry_flag, clk, reset, V, op_code, condition_code)
+	process(start, curr_state, zero_flag, carry_flag, clk, reset, V, op_code, condition_code)
 		variable next_state : fsm_state;
 		--variable Tvar : std_logic_vector(19 downto 0);
 		variable a1_mux_var : std_logic_vector(1 downto 0);
@@ -94,7 +95,7 @@ begin
 			next_state := curr_state;
 			car_w_var := '0';
 			zer_w_var := '0';
-			--done_var := '0';
+			done_var := '0';
 			a1_mux_var := (others => '0');
 			a2_mux_var := '0';
 			a3_mux_var := (others => '0');
@@ -108,24 +109,30 @@ begin
 			do_mux_var := '0';
 			ir_w_var := '0';
 			tx_mux_var := "00";
-			alu_c_var := '1';
+			alu_c_var := '0';
 			do_xor_var := '0';
 			uc_w_var := '0';
 			
 			
 			case curr_state is
+				when rst =>
+					if start = '1'
+					then
+						ir_w_var := '1';
+						next_state := s0;
+					end if;
 				when s0 =>
-					if (op_code = "0000" or op_code = "0010") then
-						if (condition_code = "00") then
+					if (op_code = "0000" or op_code = "0010") then -- ADD/NDU
+						if (condition_code = "00") then -- ADD/NDU
 							next_state := s1;
-						elsif (condition_code="01") then
-							if (zero_flag = '1') then
+						elsif (condition_code="01") then 
+							if (zero_flag = '1') then --ADZ/NDZ
 								next_state := s1;
 							else
 								next_state := s5;
 							end if;
 						elsif (condition_code = "10") then
-							if (carry_flag = '1') then
+							if (carry_flag = '1') then -- ADC/NDC
 								next_state := s1;
 							else
 								next_state := s5;
@@ -145,9 +152,9 @@ begin
 						next_state := s5;
 					elsif (op_code = "0110" or op_code = "0111") then --LM or SM
 						next_state := s20;
+					elsif (op_code = "1111" ) then -- EXIT program
+						done_var := '1';
 					end if;
-					next_state := s1;
-					
 				when s1 =>
 --					alu_c_var := '0';
 					a1_mux_var := "10";	--ra -> a1
@@ -202,7 +209,7 @@ begin
 					d3_mux_var := "10"; 	--t3 -> d0
 					a3_mux_var := "011";	--+7 -> a3
 					ir_w_var := '1';	--edb -> ir
-					done_var := '1';
+					--done_var := '1';
 					next_state := s0;
 				
 				when s5 =>
@@ -233,7 +240,7 @@ begin
 						next_state := s5;
 						do_xor_var := '1';
 					elsif (op_code = "0001") then
-						alu_c_var := '1';
+						alu_c_var := '0';
 					elsif (op_code = "0110") then--lm
 						alu_c_var := '0';
 						next_state := s11;
@@ -399,7 +406,7 @@ begin
 			uc_w_c <= uc_w_var;
 			if(clk'event and (clk = '1')) then
 				if(reset = '1') then
-           		  curr_state <= s0;
+           		  curr_state <= rst;
         		else
              		curr_state <= next_state;
         		end if;

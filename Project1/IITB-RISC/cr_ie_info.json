@@ -1,0 +1,22 @@
+{
+	"system" : {
+		"platform" : "linux64",
+		"os_name" : "Ubuntu 16.04.1",
+		"os_version" : "16"
+	},
+	"error" : {
+		"executable" : "quartus_map",
+		"comment" : "none",
+		"error_message" : "Segment Violation at 0xffffffff",
+		"source_file" : "unknown",
+		"line" : "0",
+		"stack_trace" : "\t 0xffffffff:\n",
+		"subsystem" : "unknown"
+	},
+	"quartus" : {
+		"quartus_bits" : "64",
+		"version" : "16.0.0",
+		"build" : "211",
+		"edition" : "Lite Edition"
+	}
+}

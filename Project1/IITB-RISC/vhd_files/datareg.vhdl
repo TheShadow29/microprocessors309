@@ -12,13 +12,18 @@ entity DataRegister is
 end entity;
 
 architecture NBits of DataRegister is
+signal prevDin: std_logic_vector(Din'range) := (others=>'0');
 begin
 	process(clk)
 	begin
 		if(clk'event and (clk = '1')) then
-			if(enable = '1') then
+			if enable = '1' then
+				prevDin <= Din;
 				Dout <= Din;
+			else
+				Dout <= prevDin;
 			end if;
 		end if;
 	end process;
+--	Dout<=prevDin;
 end NBits;

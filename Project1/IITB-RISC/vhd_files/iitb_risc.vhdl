@@ -10,7 +10,7 @@ entity iitb_risc is
 	port (
 		prog_en: in std_logic;
 		prog_addr: in std_logic_vector(15 downto 0);
-		prog_data: in std_logic_vector(15 downto 0);
+		prog_data: inout std_logic_vector(15 downto 0);
 				
 		start, clk, reset: in std_logic;
 		done : out std_logic

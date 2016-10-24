@@ -15,14 +15,16 @@ architecture RTL of memory_model is
 
    type ram_type is array (0 to 65535) of std_logic_vector(15 downto 0);
    signal ram : ram_type;
+	
+	constant highZ : std_logic_vector(data'range) := (others => 'Z');
 begin
-
   RamProc: process(clk) is
 
   begin
     if rising_edge(clk) then
       if rw = '1' then
 		  -- Write
+		  data <= highZ;
         ram(to_integer(unsigned(address))) <= data;
 		else
 		  -- Read

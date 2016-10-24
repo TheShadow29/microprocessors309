@@ -93,7 +93,8 @@ package all_components is
 			prog_addr: in std_logic_vector(15 downto 0);
 			prog_data: inout std_logic_vector(15 downto 0);
 			
-			start, done, clk: in std_logic
+			start, clk, reset: in std_logic;
+			done: out std_logic
 		);
 	end component iitb_risc;
 	
@@ -143,7 +144,7 @@ package all_components is
 	(
 		prog_en: in std_logic;
 		prog_addr: in std_logic_vector(15 downto 0);
-		prog_data: in std_logic_vector(15 downto 0);
+		prog_data: inout std_logic_vector(15 downto 0);
 		a1_mux_c : in std_logic_vector(1 downto 0);
 		a2_mux_c : in std_logic;
 		a3_mux_c : in std_logic_vector(2 downto 0);

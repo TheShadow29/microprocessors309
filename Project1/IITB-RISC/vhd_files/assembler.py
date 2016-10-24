@@ -35,7 +35,9 @@ TOKEN_DATA = {
   'beq': (OP_CODE, VALUE, COMMA, VALUE, COMMA, VALUE),
   'jal': (OP_CODE, VALUE, COMMA, VALUE),
   'jlr': (OP_CODE, VALUE, COMMA, VALUE),
-  'org': (OP_CODE, VALUE)
+  'org': (OP_CODE, VALUE),
+  'db': (OP_CODE, VALUE),
+  'test': (OP_CODE,VALUE)
 }
 # Provides the relative swaps of indices for opcodes
 REORDER_DATA = {
@@ -63,7 +65,9 @@ INS_DATA = {
   'beq': ("1100", REGISTER, REGISTER, VALUE_6, "\n"),
   'jal': ("1000", REGISTER, VALUE_9, "\n"),
   'jlr': ("1001", REGISTER, REGISTER, "000000\n"),
-  'org': ("1111111111111111\n", MEMORY, "\n")
+  'org': ("1111111111111111\n", MEMORY, "\n"),
+  'db': ("", MEMORY, "\n"),
+  'test': ("", MEMORY, "\n")
 }
 
 # General purpose regular expressions
@@ -84,57 +88,7 @@ def reorder_tokens(tokens):
           return
         else:
           tokens[i+swap[0]], tokens[i+swap[1]] = tokens[i+swap[1]], tokens[i+swap[0]]
-          
-def bin_to_hex(binary):
-  '''
-  This function converts a binary string to a hexadecimal string
-  Expexted input is a string of ones and zeros
-  Output is HEX written in ASCII
-  '''
-  dec = 0;
-  out = [];
-  for bit in range(len(binary)):
-    if binary[bit] == "1":
-      dec = dec + int(2**((len(binary)-bit-1)))
-       
-  return dec_to_hex(dec,4)
-  
-def hex_string_to_uint8(hex):
-  uint8 = []
-  for i in range(0,len(hex),2):
-    if i+1==len(hex):
-      print("Invalid HEX String.")
-      return []
-    uint8.append(hex_to_dec(hex[i:i+2]))
-    
-  return uint8
-    
-def hex_to_dec(inp):
-  hex = "0123456789ABCDEF";
-  dec = 0;
-  for nibble in range(len(inp)):
-    if not inp[nibble] == "0":
-      dec = dec + int((16**((len(inp)-nibble-1)))*hex.index(inp[nibble]))
-  
-  return dec
-  
-def dec_to_hex(decimal, length):
-  '''
-  This function converts a decimal integer
-  into a string of its HEX equivalent
-  '''
-  
-  out = []
-  hex = "0123456789ABCDEF";
-  for i in range(length):
-    out.insert(0,hex[int(decimal%16)])
-    decimal = decimal//16;
-    
-  return "".join(out)
-  
-def checksum_gen(hex_string):
-  return ~(sum(hex_string_to_uint8(hex_string))%256) + 1
-    
+
 def get_peripherals(bin_format, format_pointer):
   '''
   This function is used to append constant binary sequences,
@@ -181,7 +135,7 @@ def get_binary(token, next_type):
     value = int(token[1][1:], 10)
   else:
     # This should never happen
-    print ("Something is wrong with this code")
+    print "Something is wrong with this code"
     return 0
 
   # Return final binary output based on expected data size.
@@ -189,31 +143,31 @@ def get_binary(token, next_type):
   if next_type == REGISTER:
     # 3 bit register data
     if value >= 2**3 or value < 0:
-      print ("Register out of bounds in " + token[1] + " of line " + str(token[2]))
+      print "Register out of bounds in " + token[1] + " of line " + str(token[2])
       sys.exit(0)
     return '{:03b}'.format(value)
   elif next_type == VALUE_6:
     # 6 bit immediate value data
     if (value >= 2**6 or value < 0):
-      print ("6 bit value out of bounds in " + token[1] + " of line " + str(token[2]))
+      print "6 bit value out of bounds in " + token[1] + " of line " + str(token[2])
       sys.exit(0)
     return '{:06b}'.format(value)
   elif next_type == VALUE_8:
     # 8 bit immediate value data used in LM / SM
     if (value >= 2**8 or value < 0):
-      print ("8 bit value out of bounds in " + token[1] + " of line " + str(token[2]))
+      print "8 bit value out of bounds in " + token[1] + " of line " + str(token[2])
       sys.exit(0)
     return '{:08b}'.format(value)
   elif next_type == VALUE_9:
     # 9 bit immediate value data
     if (value >= 2**9 or value < 0):
-      print ("9 bit value out of bounds in " + token[1] + " of line " + str(token[2]))
+      print "9 bit value out of bounds in " + token[1] + " of line " + str(token[2])
       sys.exit(0)
     return '{:09b}'.format(value)
   elif next_type == MEMORY:
     # 16 bit memory addresses
     if (value >= 2**16 or value < 0):
-      print ("Memory value out of bounds in " + token[1] + " of line " + str(token[2]))
+      print "Memory value out of bounds in " + token[1] + " of line " + str(token[2])
       sys.exit(0)
     return '{:016b}'.format(value)
 
@@ -246,7 +200,7 @@ def get_tokens(word="", number=0):
   for s in sequence:
     token_type = get_token_type(s)
     if token_type == ERROR:
-      print ("Token " + s + " couldn't be identified in line " + str(number))
+      print "Token " + s + " couldn't be identified in line " + str(number)
       sys.exit(0)
     # Empty character ''
     if token_type != NONE:
@@ -278,10 +232,15 @@ format_pointer = 0
 token_pointer = 0
 # Final output hex sequence
 output = ""
+
+curr_addr = 0;
+data = "";
+org = False;
+test_mode = False;
 for num, token in enumerate(tokens):
   # Throw an error if ordering of tokens in not correct
   if token[0] != next_expected:
-    print ("Expected " + next_expected + " but found " + token[0] + " in " + token[1] + " of line " + str(token[2]))
+    print "Expected " + next_expected + " but found " + token[0] + " in " + token[1] + " of line " + str(token[2])
   # Start a new instruction
   if token[0] == OP_CODE:
     # load the instruction token sequence and binary format
@@ -290,54 +249,44 @@ for num, token in enumerate(tokens):
     token_pointer = 1
     format_pointer = 1
     # Append op_code
-    output += bin_format[0]
+
+    if token[1] != 'org':
+        data += bin_format[0]
+    else:
+        org = True;
+
+    if token[1] == 'test':
+        test_mode = True
   elif token[0] == VALUE:
     # Append value
-    output += get_binary(token, bin_format[format_pointer])
-    format_pointer += 1
+    if org:
+      curr_addr = int(get_binary(token, bin_format[format_pointer]),2);
+    else:
+      data += get_binary(token, bin_format[format_pointer])
+      format_pointer += 1
 
   # Add all peripheral bits in the instruction
   # Most of the times, this will be an empty list
   peripherals = get_peripherals(bin_format, format_pointer)
   for p in peripherals:
-    output += p
+    data += p
     format_pointer += 1
 
   if token_pointer == len(instruction):
     # End of instruction, wait for next instruction
+    if not org:
+      output += '{:01b} {:016b} {:s}'.format(1 if test_mode else 0,curr_addr,data);
+      curr_addr += 1;
+    data = ""
+    org = False;
     next_expected = OP_CODE
     token_pointer = 0
-    
   else:
     # Expect next token of current instruction
     next_expected = instruction[token_pointer]
     token_pointer += 1
+
 # Write the hex output to a file
-hex_output = [bin_to_hex(i) for i in output[:len(output)-1].split("\n")]
-hex_file = open(sys.argv[2],'w')
-address = 0
-
-while hex_output:
-
-  if("FFFF" in hex_output):
-    branch = hex_output.index("FFFF")
-  else:
-    branch = len(hex_output)
-    
-  to_print = ""
-  if(branch+1>32):
-    to_print += ":" + dec_to_hex(64,2) + dec_to_hex(address,4) + "00" + "".join(hex_output[0:32])
-    hex_output = hex_output[32:]
-    address += 32;
-  else:  
-    to_print += ":" + dec_to_hex((branch)*2,2) + dec_to_hex(address,4) + "00" + "".join(hex_output[0:branch])
-    hex_output = hex_output[branch+1:]
-    if(hex_output):
-      address = hex_to_dec(hex_output[0])
-      del hex_output[0]
-  checksum = checksum_gen(to_print[1:])
-  to_print += dec_to_hex(checksum,2)
-  hex_file.write(to_print + "\n")
-  
-#Hex File Terminator  
-hex_file.write(":00000001FF")
+f = open(sys.argv[2], 'w')
+f.write(output)
+f.close()
