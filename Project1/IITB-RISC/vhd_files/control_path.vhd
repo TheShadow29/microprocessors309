@@ -65,7 +65,10 @@ architecture control of control_path is
 		s21,
 		s22,
 		s23,
-		s24);
+		s24,
+		s25,
+		s26,
+		s27);
 		
 	signal curr_state : fsm_state := rst;
 begin
@@ -154,6 +157,7 @@ begin
 						next_state := s20;
 					elsif (op_code = "1111" ) then -- EXIT program
 						done_var := '1';
+						next_state := rst;
 					end if;
 				when s1 =>
 --					alu_c_var := '0';
@@ -180,9 +184,13 @@ begin
 						next_state := s3;
 					elsif (op_code = "0010") then--nand
 						alu_c_var := '1';
-						zer_w_var := '1';
+						zer_w_var := '1';	--nand sets the zero flag
+						--car_w_var := '1';	
 						next_state := s3;
 					elsif(op_code = "0001") then--adi
+						alu_c_var := '0';
+						car_w_var := '1';
+						zer_w_var := '1';
 						next_state := s8;
 					elsif(op_code = "0100") then--lw
 						next_state := s11;
@@ -216,7 +224,8 @@ begin
 					a1_mux_var := "11";	--f1, +7 -> a1
 					t1_mux_var := '1';	--d1 -> t1
 					t2_mux_var := "011";	--+1 -> t2
-					if (op_code = "0000") then
+					next_state := s6;
+					if (op_code = "0000" or op_code = "0010") then
 						if (condition_code = "10" or condition_code = "01") then
 							next_state := s6;
 						end if;
@@ -224,7 +233,7 @@ begin
 						if (zero_flag = '1') then
 							next_state := s15;
 						else
-							next_state := s6;
+							next_state := s26;
 						end if;
 					elsif (op_code = "1000") then--JAL
 						next_state := s16;
@@ -238,12 +247,17 @@ begin
 					next_state := s4;					
 					if (op_code = "1100") then--beq
 						next_state := s5;
+						zer_w_var := '1';
 						do_xor_var := '1';
 					elsif (op_code = "0001") then
 						alu_c_var := '0';
 					elsif (op_code = "0110") then--lm
 						alu_c_var := '0';
 						next_state := s11;
+					elsif (op_code = "0100") then --lw
+						alu_c_var := '0';
+						zer_w_var := '1';
+						next_state := s25;
 					end if;
 				
 				when s7 =>
@@ -270,20 +284,24 @@ begin
 					a1_mux_var := "01";	--rb -> a1
 					t1_mux_var := '1';	--d1 ->t1
 					t2_mux_var := "010"; --6bi -> t2
-					next_state := s2;
+					next_state := s6;
 				
 				when s11 =>
 					a0_mux_var := "11";	--t3 -> a0
 					di_w_var := '1';		--edb -> di
 					if (op_code = "0100") then
 						next_state := s12;
-					elsif (op_code = "0110") then
+					elsif (op_code = "0110") then	--LM
 						next_state := s22;
 					end if;
 					
 				when s12 =>
 					d3_mux_var := "01";	--di -> d3
 					a3_mux_var := "101"; --ra -> a3
+					t3_w_var := '1';
+					next_state := s4;		
+					alu_c_var := '0';
+					zer_w_var := '1'; -- LW set zero flag
 					next_state := s4;
 				
 				when s13 => 
@@ -305,7 +323,7 @@ begin
 					a1_mux_var := "11"; --+7 -> a1
 					t1_mux_var := '1';	--d1 ->t1
 					t2_mux_var := "010"; --d2 -> t2
-					next_state := s6;
+					next_state := s26;
 					
 				when s16 =>
 					t3_w_var := '1';	--alu -> t3
@@ -348,9 +366,9 @@ begin
 					t2_mux_var:= "101"; --LO16 -> t2
 					a1_mux_var := "10";	--ra -> t1
 					t1_mux_var := '1';	--d1 -> t1
-					if (op_code = "0110") then
-						next_state := s6;
-					elsif (op_code = "0111") then
+					if (op_code = "0110") then	--LM	
+						next_state := s27;
+					elsif (op_code = "0111") then	--SM
 						next_state := s23;
 					end if;
 					
@@ -382,6 +400,22 @@ begin
 						next_state := s21;
 					end if;
 					
+				when s25 =>
+					a0_mux_var := "11";	--t3 -> a0
+					di_w_var := '1';		--edb -> di
+					a1_mux_var := "11";	--f1, +7 -> a1
+					t1_mux_var := '1';	--d1 -> t1
+					t2_mux_var := "011";	--+1 -> t2
+					next_state := s12;	
+			
+				when s26 =>
+					t3_w_var := '1';
+					next_state := s4;	
+					
+				when s27 =>
+					t3_w_var := '1';
+					next_state := s11;			
+					
 			end case;
 			
 			--transition_signals(19 downto 0) <= Tvar(19 downto 0);
@@ -404,7 +438,7 @@ begin
 			car_w_c <= car_w_var;
 			zer_w_c <= zer_w_var;
 			uc_w_c <= uc_w_var;
-			if(clk'event and (clk = '1')) then
+			if(clk'event and (clk = '0')) then
 				if(reset = '1') then
            		  curr_state <= rst;
         		else

@@ -54,8 +54,9 @@ begin
 			sigout(14) or
 			sigout(15));
 	xor_out <= X xor Y;
-	out_p <= sigout when (do_xor = '0') else xor_out;
 	
-	final: mux2 port map (A0 => tmp1, A1 => tmp2 , s => op_code , D => sigout);
-
+	sigout <= xor_out when do_xor = '1' else
+					tmp1  when op_code = '0' else
+					tmp2;
+	out_p <= sigout;
 end architecture;

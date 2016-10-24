@@ -50,7 +50,7 @@ architecture data of data_path is
 	signal pe: std_logic_vector(2 downto 0);
 		
 	signal mem_addr,mem_data,mem_data_temp,eab,edb_w, edb_r: std_logic_vector(15 downto 0);
-	signal mem_rw, uc_rw: std_logic;
+	signal mem_rw, uc_rw, alu_zero, di_zero: std_logic;
 	
 	signal t1_in,t2_in,t3_in,t3_out,
 			 ao_in,
@@ -82,7 +82,7 @@ architecture data of data_path is
 begin
 
 -- Components
-alu1: alu port map(X=>alui1,Y=>alui2,out_p=>aluo,op_code=>aluc,do_xor => do_xor_c, C=>C,Z=>Z);
+alu1: alu port map(X=>alui1,Y=>alui2,out_p=>aluo,op_code=>aluc,do_xor => do_xor_c, C=>C,Z=>alu_zero);
 regfile1: RegFile port map(D1=>D1, D2=>D2, D3=>D3, A1=>A1, A2=>A2, A3=>A3, clk=>clk, WR=>RF_WE);
 pri_enc : PriorityEncoder port map(x => T_out, s=>pe,N => N, Tn=>Tn);
 mem : memory_model port map (clk => clk, rw => mem_rw, address => mem_addr, data => mem_data);
@@ -106,12 +106,17 @@ t3: DataRegister port map (Din=>aluo,Dout=>t3_out,enable=>t3_w,clk=>clk);
 T: DataRegister port map (Din=>T_in,Dout=>T_out,enable=>T_w,clk=>clk);
 
 di: DataRegister port map (Din=>edb_r,Dout=>di_out,enable=>di_w,clk=>clk);
+di_zero <= '1' when di_out = zero else '0';
+
 do: DataRegister port map (Din=>do_in,Dout=>edb_w,enable=>do_w,clk=>clk);
-ao: DataRegister port map (Din=>ao_in,Dout=>eab,enable=>ao_w,clk=>clk);
+--ao: DataRegister port map (Din=>ao_in,Dout=>eab,enable=>ao_w,clk=>clk);
+eab <= ao_in when (ao_w = '1');
 ir: DataRegister port map (Din=>edb_r,Dout=>ir_out,enable=>ir_w,clk=>clk);
 
 c1: data_register_bin port map (Din => C, Dout => carry_flag, enable => car_w, clk => clk);
 z1: data_register_bin port map (Din => Z, Dout => zero_flag, enable => zer_w, clk => clk);
+
+Z <= di_zero when d3_c = "01" else alu_zero;
 
 -- Data path connection muxes
 ra<=ir_out(11 downto 9);
@@ -121,6 +126,7 @@ nine_bit_high(15 downto 7) <= ir_out(8 downto 0);
 nine_bit_imm(8 downto 0) <= ir_out(8 downto 0);
 six_bit_imm(5 downto 0) <= ir_out(5 downto 0);
 pe_16(2 downto 0) <= pe;
+
 
 
 aluc <= alu_op_code;
@@ -143,13 +149,13 @@ a2_c <= a2_mux_c;
 
 
 a3_mux: mux8 port map
-			(A0=>ra,A1=>rb,A2=>rc,A3=>const_7,A4 => pe, A5 => zero_3_bit, A6 => zero_3_bit, A7 => zero_3_bit,
+			(A0=>zero_3_bit,A1=>rb,A2=>rc,A3=>const_7,A4 => pe, A5 => ra, A6 => zero_3_bit, A7 => zero_3_bit,
 			 s=>a3_c,
 			 D=>a3);
 a3_c <= a3_mux_c;
 			 
 d3_mux: mux4 port map
-			(A0=>di_out,A1=>d1,A2=>t3_out,A3=>nine_bit_high,
+			(A0=>d1,A1=>di_out,A2=>t3_out,A3=>nine_bit_high,
 			 s=>d3_c,
 			 D=>d3);
 d3_c <= d3_mux_c;
@@ -186,7 +192,7 @@ t2_w <= t2_mux_c(0) or t2_mux_c(1) or t2_mux_c(2);
 t3_w <= t3_w_c;
 
 do_mux: mux2 port map
-			(A0=>d1,A1=>t3_out,
+			(A0=>d1,A1=>d2,
 			 s=>do_c,
 			 D=>do_in);
 do_c <= do_mux_c;

@@ -16,7 +16,7 @@ signal prevDin: std_logic_vector(Din'range) := (others=>'0');
 begin
 	process(clk)
 	begin
-		if(clk'event and (clk = '1')) then
+		if(clk'event and (clk = '0')) then
 			if enable = '1' then
 				prevDin <= Din;
 				Dout <= Din;

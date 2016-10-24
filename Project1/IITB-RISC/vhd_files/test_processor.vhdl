@@ -31,9 +31,12 @@ architecture Behave of TestProcessor is
       return(ret_val);
   end to_string;
 
-  signal prog_addr,prog_data : std_logic_vector(15 downto 0);
+  signal prog_addr,prog_data_w,prog_data_r,prog_data : std_logic_vector(15 downto 0);
   signal prog_en,proc_start,proc_done,proc_reset : std_logic;
   signal clk : std_logic := '0';
+  
+  
+	constant highZ : std_logic_vector(15 downto 0) := (others => 'Z');
 begin
     clk <= not clk after 5 ns; -- assume 10ns clock.
 
@@ -82,7 +85,7 @@ begin
         then
 				prog_en <= '0';
 				proc_start <= '1';
-				wait until clk = '1';
+				wait until clk = '0';
 				proc_start <= '0';
             wait until proc_done = '1';
 				mode := '1' ;
@@ -91,14 +94,15 @@ begin
         if mode = '0'
         then
             for i in 0 to 15 loop
-                prog_data(i) <= to_std_logic(input_data(i));
+                prog_data_w(i) <= to_std_logic(input_data(i));
             end loop;
         end if;
 
         if mode = '1'
         then
+				prog_data_w <= highZ;
             for i in 0 to 15 loop
-              if (prog_data(i) /= to_std_logic(input_data(i))) then
+              if (prog_data_r(i) /= to_std_logic(input_data(i))) then
                      write(OUTPUT_LINE,to_string("ERROR: in Checking Data, line "));
                      write(OUTPUT_LINE, i);
                  write(OUTPUT_LINE, LINE_COUNT);
@@ -116,6 +120,8 @@ begin
     wait;
   end process;
 
+  prog_data <= prog_data_w;
+  prog_data_r <= prog_data;
   dut : iitb_risc port map (prog_en=>prog_en,prog_addr=>prog_addr,prog_data=>prog_data,
                             start=>proc_start, done=>proc_done, clk=>clk, reset=>proc_reset);
 
