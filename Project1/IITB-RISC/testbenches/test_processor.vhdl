@@ -123,9 +123,9 @@ begin
     wait;
   end process;
 
-  prog_data <= prog_data_w;
-  prog_data_r <= prog_data;
-  dut : iitb_risc port map (prog_en=>prog_en,test_en=>test_en,prog_addr=>prog_addr,prog_data=>prog_data,
+--  prog_data <= prog_data_w;
+--  prog_data_r <= prog_data;
+  dut : iitb_risc port map (prog_en=>prog_en,test_en=>test_en,prog_addr=>prog_addr,prog_data_w=>prog_data_w,prog_data_r=>prog_data_r,
                             start=>proc_start, done=>proc_done, clk=>clk, reset=>proc_reset);
 
 end Behave;

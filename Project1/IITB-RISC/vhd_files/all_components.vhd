@@ -91,7 +91,8 @@ package all_components is
 		port (
 			prog_en,test_en: in std_logic;
 			prog_addr: in std_logic_vector(15 downto 0);
-			prog_data: inout std_logic_vector(15 downto 0);
+			prog_data_w: in std_logic_vector(15 downto 0);
+			prog_data_r: out std_logic_vector(15 downto 0);
 			
 			start, clk, reset: in std_logic;
 			done: out std_logic;
@@ -99,13 +100,15 @@ package all_components is
 		);
 	end component iitb_risc;
 	
-	component memory_model is
-	  port (
-		 clk   : in  std_logic;
-		 rw : in std_logic;
-		 address : in  std_logic_vector;
-		 data  : inout  std_logic_vector
-	  );
+	component ram_megafunction is
+	PORT
+	(
+		address		: IN STD_LOGIC_VECTOR (14 DOWNTO 0);
+		clock		: IN STD_LOGIC  := '1';
+		data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
+		wren		: IN STD_LOGIC ;
+		q		: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
+	);
 	end component;
 	
 	component control_path is
@@ -145,7 +148,8 @@ package all_components is
 	(
 		prog_en,test_en: in std_logic;
 		prog_addr: in std_logic_vector(15 downto 0);
-		prog_data: inout std_logic_vector(15 downto 0);
+		prog_data_w: in std_logic_vector(15 downto 0);
+		prog_data_r: out std_logic_vector(15 downto 0);
 		a1_mux_c : in std_logic_vector(1 downto 0);
 		a2_mux_c : in std_logic;
 		a3_mux_c : in std_logic_vector(2 downto 0);

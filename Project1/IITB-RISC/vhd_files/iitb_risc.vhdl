@@ -10,7 +10,8 @@ entity iitb_risc is
 	port (
 		prog_en,test_en: in std_logic;
 		prog_addr: in std_logic_vector(15 downto 0);
-		prog_data: inout std_logic_vector(15 downto 0);
+		prog_data_w: in std_logic_vector(15 downto 0);
+		prog_data_r: out std_logic_vector(15 downto 0);
 				
 		start, clk, reset: in std_logic;
 		done : out std_logic;
@@ -62,7 +63,8 @@ cp : control_path port map
 dp1 : data_path port map 
 		(
 			prog_addr => prog_addr,
-			prog_data => prog_data, 
+			prog_data_w => prog_data_w, 
+			prog_data_r => prog_data_r, 
 			prog_en => prog_en,
 			test_en => test_en,
 			carry_flag => carry_flag,
