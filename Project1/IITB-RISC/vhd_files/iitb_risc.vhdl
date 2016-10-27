@@ -13,7 +13,8 @@ entity iitb_risc is
 		prog_data: inout std_logic_vector(15 downto 0);
 				
 		start, clk, reset: in std_logic;
-		done : out std_logic
+		done : out std_logic;
+		op_code1 : out std_logic_vector(3 downto 0)
 	);
 end entity iitb_risc;
 
@@ -24,6 +25,8 @@ architecture Behave of iitb_risc is
 		signal a3_mux_c , t2_mux_c:  std_logic_vector(2 downto 0);
 		signal op_code :  std_logic_vector(3 downto 0);
 begin
+
+op_code1 <= op_code;
 
 cp : control_path port map 
 		(

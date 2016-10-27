@@ -94,7 +94,8 @@ package all_components is
 			prog_data: inout std_logic_vector(15 downto 0);
 			
 			start, clk, reset: in std_logic;
-			done: out std_logic
+			done: out std_logic;
+			op_code1: out std_logic_vector(3 downto 0)
 		);
 	end component iitb_risc;
 	

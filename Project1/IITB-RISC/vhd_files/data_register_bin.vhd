@@ -11,13 +11,17 @@ entity data_register_bin is
 	      clk, enable: in std_logic);
 end entity;
 architecture Behave of data_register_bin is
+signal prevDin: std_logic := '0';
 begin
-    process(clk)
-    begin
-       if(clk'event and (clk  = '1')) then
-           if(enable = '1') then
-               Dout <= Din;
-           end if;
-       end if;
-    end process;
+	process(clk)
+	begin
+		if(clk'event and (clk = '0')) then
+			if enable = '1' then
+				prevDin <= Din;
+				Dout <= Din;
+			else
+				Dout <= prevDin;
+			end if;
+		end if;
+	end process;
 end Behave;

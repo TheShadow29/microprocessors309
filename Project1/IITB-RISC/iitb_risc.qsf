@@ -37,8 +37,8 @@
 # -------------------------------------------------------------------------- #
 
 
-set_global_assignment -name FAMILY "Cyclone IV GX"
-set_global_assignment -name DEVICE AUTO
+set_global_assignment -name FAMILY "Cyclone IV E"
+set_global_assignment -name DEVICE EP4CE22F17C6
 set_global_assignment -name TOP_LEVEL_ENTITY iitb_risc
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 16.0.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "16:18:39  OCTOBER 17, 2016"
@@ -82,9 +82,28 @@ set_global_assignment -name EDA_TEST_BENCH_NAME test_processor -section_id eda_s
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id test_processor
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME TestProcessor -section_id test_processor
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "3 us" -section_id test_processor
+set_global_assignment -name EDA_GENERATE_FUNCTIONAL_NETLIST ON -section_id eda_simulation
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_location_assignment PIN_A8 -to clk
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name EDA_TEST_BENCH_FILE testbenches/testrf.vhdl -section_id testrf
 set_global_assignment -name EDA_TEST_BENCH_FILE testbenches/testalu.vhdl -section_id testalu
 set_global_assignment -name EDA_TEST_BENCH_FILE testbenches/test_prirority_encoder.vhdl -section_id test_priority_encoder
 set_global_assignment -name EDA_TEST_BENCH_FILE testbenches/test_memory.vhdl -section_id test_memory
 set_global_assignment -name EDA_TEST_BENCH_FILE testbenches/test_processor.vhdl -section_id test_processor
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name EDA_TEST_BENCH_FILE vhd_files/adder.vhdl -section_id test_processor
+set_global_assignment -name EDA_TEST_BENCH_FILE vhd_files/all_components.vhd -section_id test_processor
+set_global_assignment -name EDA_TEST_BENCH_FILE vhd_files/alu.vhd -section_id test_processor
+set_global_assignment -name EDA_TEST_BENCH_FILE vhd_files/data_path.vhd -section_id test_processor
+set_global_assignment -name EDA_TEST_BENCH_FILE vhd_files/control_path.vhd -section_id test_processor
+set_global_assignment -name EDA_TEST_BENCH_FILE vhd_files/data_register_bin.vhd -section_id test_processor
+set_global_assignment -name EDA_TEST_BENCH_FILE vhd_files/datareg.vhdl -section_id test_processor
+set_global_assignment -name EDA_TEST_BENCH_FILE vhd_files/decoder.vhdl -section_id test_processor
+set_global_assignment -name EDA_TEST_BENCH_FILE vhd_files/iitb_risc.vhdl -section_id test_processor
+set_global_assignment -name EDA_TEST_BENCH_FILE vhd_files/memory_model.vhd -section_id test_processor
+set_global_assignment -name EDA_TEST_BENCH_FILE vhd_files/muxes.vhdl -section_id test_processor
+set_global_assignment -name EDA_TEST_BENCH_FILE vhd_files/regfile.vhdl -section_id test_processor
+set_global_assignment -name EDA_TEST_BENCH_FILE vhd_files/priority_encoder.vhd -section_id test_processor
