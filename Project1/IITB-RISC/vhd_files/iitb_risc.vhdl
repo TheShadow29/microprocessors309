@@ -14,7 +14,9 @@ entity iitb_risc is
 				
 		start, clk, reset: in std_logic;
 		done : out std_logic;
-		op_code1 : out std_logic_vector(3 downto 0)
+		op_code1 : out std_logic_vector(3 downto 0);
+		
+		curr_state1 : out fsm_state
 	);
 end entity iitb_risc;
 
@@ -56,7 +58,8 @@ cp : control_path port map
 			done => done,
 			V => V,
 			uc_w_c => uc_rw_c,
-			do_xor_c => do_xor_c
+			do_xor_c => do_xor_c,
+			curr_state1 => curr_state1
 		);
 		
 dp1 : data_path port map 

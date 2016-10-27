@@ -113,7 +113,7 @@ di_zero <= '1' when di_out = zero else '0';
 
 do: DataRegister port map (Din=>do_in,Dout=>edb_w,enable=>do_w,clk=>clk);
 --ao: DataRegister port map (Din=>ao_in,Dout=>eab,enable=>ao_w,clk=>clk);
-eab <= ao_in when (ao_w = '1');
+eab <= ao_in when (ao_w = '1') else zero;
 ir: DataRegister port map (Din=>edb_r,Dout=>ir_out,enable=>ir_w,clk=>clk);
 
 c1: data_register_bin port map (Din => C, Dout => carry_flag, enable => car_w, clk => clk);

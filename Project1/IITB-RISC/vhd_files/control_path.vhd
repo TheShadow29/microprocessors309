@@ -34,45 +34,17 @@ entity control_path is
 		carry_flag : in std_logic;
 		zero_flag : in std_logic;
 		start : in std_logic;
-		done : out std_logic
+		done : out std_logic;
+		curr_state1 : out fsm_state
 	);
 end entity;
 
 architecture control of control_path is
-	type fsm_state is 
-		(rst,
-		s0,	
-		s1,	-- ra -> a1, rb -> a2, d1 -> t1, d2 -> t2
-		s2,
-		s3,
-		s4,
-		s5,
-		s6,
-		s7,
-		s8,
-		s9,
-		s10,
-		s11,
-		s12,
-		s13,
-		s14,
-		s15,
-		s16,
-		s17,
-		s18,
-		s19,
-		s20,
-		s21,
-		s22,
-		s23,
-		s24,
-		s25,
-		s26,
-		s27,
-		s28);
-		
+	
 	signal curr_state : fsm_state := rst;
 begin
+	curr_state1 <= curr_state;
+
 	process(start, curr_state, zero_flag, carry_flag, clk, reset, V, op_code, condition_code)
 		variable next_state : fsm_state;
 		--variable Tvar : std_logic_vector(19 downto 0);
