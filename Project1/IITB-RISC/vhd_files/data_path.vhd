@@ -36,7 +36,9 @@ entity data_path is
 		uc_rw_c : in std_logic;
 		op_code : out std_logic_vector(3 downto 0);
 		condition_code : out std_logic_vector(1 downto 0);
-		N : out std_logic
+		N : out std_logic;
+		
+		mem_data_r1,mem_data_w1,mem_addr1,ir_dout1 : out std_logic_vector(15 downto 0)
 	);
 end entity;
 
@@ -83,6 +85,12 @@ architecture data of data_path is
 
 	constant highZ : std_logic_vector(15 downto 0) := (others => 'Z');
 begin
+
+--debugging
+mem_addr1 <= mem_addr;
+mem_data_r1 <= mem_data_r;
+mem_data_w1 <= mem_data_w;
+ir_dout1 <= ir_out;
 
 -- Components
 alu1: alu port map(X=>alui1,Y=>alui2,out_p=>aluo,op_code=>aluc,do_xor => do_xor_c, C=>C,Z=>alu_zero);

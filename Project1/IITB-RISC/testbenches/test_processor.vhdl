@@ -31,14 +31,15 @@ architecture Behave of TestProcessor is
       return(ret_val);
   end to_string;
 
-  signal prog_addr,prog_data_w,prog_data_r,prog_data : std_logic_vector(15 downto 0);
+  signal prog_addr,prog_data_w,prog_data_r,prog_data, 
+  mem_addr1,mem_data_r1,mem_data_w1,ir_dout1 : std_logic_vector(15 downto 0);
   signal prog_en,test_en,proc_start,proc_done,proc_reset : std_logic;
   signal clk : std_logic := '0';
   
   
 	constant highZ : std_logic_vector(15 downto 0) := (others => 'Z');
 begin
-    clk <= not clk after 5 ns; -- assume 10ns clock.
+    clk <= not clk after 10 ns; -- assume 10ns clock.
 
   process 
     variable err_flag : boolean := false;
@@ -125,7 +126,10 @@ begin
 
 --  prog_data <= prog_data_w;
 --  prog_data_r <= prog_data;
-  dut : iitb_risc port map (prog_en=>prog_en,test_en=>test_en,prog_addr=>prog_addr,prog_data_w=>prog_data_w,prog_data_r=>prog_data_r,
-                            start=>proc_start, done=>proc_done, clk=>clk, reset=>proc_reset);
+  dut : iitb_risc port map (prog_en=>prog_en,test_en=>test_en,prog_addr=>prog_addr,
+									 prog_data_w=>prog_data_w,prog_data_r=>prog_data_r,
+                            start=>proc_start, done=>proc_done, clk=>clk, reset=>proc_reset, 
+									 mem_addr1=>mem_addr1, mem_data_r1=>mem_data_r1, mem_data_w1=> mem_data_w1
+									 ,ir_dout1=>ir_dout1);
 
 end Behave;

@@ -96,7 +96,8 @@ package all_components is
 			
 			start, clk, reset: in std_logic;
 			done: out std_logic;
-			op_code1: out std_logic_vector(3 downto 0)
+			op_code1: out std_logic_vector(3 downto 0);
+			mem_data_r1,mem_data_w1,mem_addr1,ir_dout1 : out std_logic_vector(15 downto 0)
 		);
 	end component iitb_risc;
 	
@@ -173,7 +174,9 @@ package all_components is
 		uc_rw_c : in std_logic;
 		op_code : out std_logic_vector(3 downto 0);
 		condition_code : out std_logic_vector(1 downto 0);
-		N : out std_logic
+		N : out std_logic;
+		
+		mem_data_r1,mem_data_w1,mem_addr1,ir_dout1 : out std_logic_vector(15 downto 0)
 	);
 	end component;
 
