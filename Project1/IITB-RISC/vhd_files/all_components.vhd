@@ -107,6 +107,15 @@ package all_components is
 		 data  : inout  std_logic_vector
 	  );
 	end component;
+	component memory_model_new is
+  port (
+    clock   : in  std_logic;
+    we      : in  std_logic;
+    address : in  std_logic_vector;
+    datain  : in  std_logic_vector;
+    dataout : out std_logic_vector
+  );
+end component;
 	
 	component control_path is
 	port

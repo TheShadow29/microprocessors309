@@ -122,6 +122,7 @@ begin
 				when rst =>
 					if start = '1'
 					then
+						done_var := '0';
 						ir_w_var := '1';
 						next_state := s0;
 					end if;

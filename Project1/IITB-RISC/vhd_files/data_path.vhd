@@ -49,7 +49,7 @@ architecture data of data_path is
 		
 	signal pe: std_logic_vector(2 downto 0);
 		
-	signal mem_addr,mem_data,mem_data_temp,eab,edb_w, edb_r: std_logic_vector(15 downto 0);
+	signal mem_addr,mem_data_w, mem_data_r,mem_data_temp,eab,edb_w, edb_r: std_logic_vector(15 downto 0);
 	signal mem_rw, uc_rw, alu_zero, di_zero: std_logic;
 	
 	signal t1_in,t2_in,t3_in,t3_out,
@@ -85,7 +85,10 @@ begin
 alu1: alu port map(X=>alui1,Y=>alui2,out_p=>aluo,op_code=>aluc,do_xor => do_xor_c, C=>C,Z=>alu_zero);
 regfile1: RegFile port map(D1=>D1, D2=>D2, D3=>D3, A1=>A1, A2=>A2, A3=>A3, clk=>clk, WR=>RF_WE);
 pri_enc : PriorityEncoder port map(x => T_out, s=>pe,N => N, Tn=>Tn);
-mem : memory_model port map (clk => clk, rw => mem_rw, address => mem_addr, data => mem_data);
+--mem : memory_model port map (clk => clk, rw => mem_rw, address => mem_addr, data => mem_data);
+mem2 : memory_model_new port map (clock => clk, we => mem_rw, address => mem_addr, datain => mem_data_w, dataout => mem_data_r);
+
+
 
 -- Program mode muxes
 --mem_addr_mux: mux2 port map (A0=>eab,A1=>prog_addr,s=>prog_en,D=>mem_addr);
@@ -94,9 +97,9 @@ mem : memory_model port map (clk => clk, rw => mem_rw, address => mem_addr, data
 mem_addr <= prog_addr when prog_en = '1' or test_en = '1' 
 				else eab;
 
-edb_r <= mem_data;
-prog_data <= mem_data when prog_en='0' else highZ;
-mem_data <= edb_w when uc_rw = '1' and prog_en = '0'
+edb_r <= mem_data_r;
+prog_data <= mem_data_w when prog_en='0' else highZ;
+mem_data_w <= edb_w when uc_rw = '1' and prog_en = '0'
             else prog_data when uc_rw = '0' and prog_en = '1'
 				else highZ;
 
