@@ -88,7 +88,7 @@ begin
 alu1: alu port map(X=>alui1,Y=>alui2,out_p=>aluo,op_code=>aluc,do_xor => do_xor_c, C=>C,Z=>alu_zero);
 regfile1: RegFile port map(D1=>D1, D2=>D2, D3=>D3, A1=>A1, A2=>A2, A3=>A3, clk=>clk, WR=>RF_WE);
 pri_enc : PriorityEncoder port map(x => T_out, s=>pe,N => N, Tn=>Tn);
-mem : ram_megafunction port map (clock => clk, wren => mem_rw, address => mem_addr(14 downto 0), q => mem_data_r, data=>mem_data_w);
+mem : ram_internal port map (clock => clk, wren => mem_rw, address => mem_addr(14 downto 0), q => mem_data_r, data=>mem_data_w);
 
 --inv_clk <= not(clk);
 -- Program mode muxes

@@ -100,7 +100,7 @@ package all_components is
 		);
 	end component iitb_risc;
 	
-	component ram_megafunction is
+	component ram_internal is
 	PORT
 	(
 		address		: IN STD_LOGIC_VECTOR (14 DOWNTO 0);
