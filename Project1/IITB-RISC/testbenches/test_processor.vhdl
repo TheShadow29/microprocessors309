@@ -39,7 +39,7 @@ architecture Behave of TestProcessor is
   
 	constant highZ : std_logic_vector(15 downto 0) := (others => 'Z');
 begin
-    clk <= not clk after 10 ns; -- assume 10ns clock.
+    clk <= not clk after 13 ns; -- assume 10ns clock.
 
   process 
     variable err_flag : boolean := false;
