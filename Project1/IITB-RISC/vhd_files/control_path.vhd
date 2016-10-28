@@ -69,7 +69,8 @@ architecture control of control_path is
 		s25,
 		s26,
 		s27,
-		s28);
+		s28,
+		end_state);
 		
 	signal curr_state : fsm_state := rst;
 begin
@@ -157,8 +158,7 @@ begin
 					elsif (op_code = "0110" or op_code = "0111") then --LM or SM
 						next_state := s20;
 					elsif (op_code = "1111" ) then -- EXIT program
-						done_var := '1';
-						next_state := rst;
+						next_state := end_state;
 					end if;
 				when s1 =>
 --					alu_c_var := '0';
@@ -410,6 +410,10 @@ begin
 					else
 						next_state := s21;
 					end if;
+					
+				when end_state => -- Stay here till reset
+					done_var := '1';
+					next_state := end_state;
 					
 			end case;
 			

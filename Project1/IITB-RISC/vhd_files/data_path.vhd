@@ -9,9 +9,9 @@ use work.all_components.all;
 entity data_path is
 	port 
 	(
-		prog_en,test_en: in std_logic;
+		test_en: in std_logic;
 		prog_addr: in std_logic_vector(15 downto 0);
-		prog_data_w: in std_logic_vector(15 downto 0);
+		--prog_data_w: in std_logic_vector(15 downto 0);
 		prog_data_r: out std_logic_vector(15 downto 0);
 		a1_mux_c : in std_logic_vector(1 downto 0);
 		a2_mux_c : in std_logic;
@@ -36,9 +36,9 @@ entity data_path is
 		uc_rw_c : in std_logic;
 		op_code : out std_logic_vector(3 downto 0);
 		condition_code : out std_logic_vector(1 downto 0);
-		N : out std_logic;
+		N : out std_logic
 		
-		mem_data_r1,mem_data_w1,mem_addr1,ir_dout1 : out std_logic_vector(15 downto 0)
+		--mem_data_r1,mem_data_w1,mem_addr1,ir_dout1 : out std_logic_vector(15 downto 0)
 	);
 end entity;
 
@@ -87,10 +87,10 @@ architecture data of data_path is
 begin
 
 --debugging
-mem_addr1 <= mem_addr;
-mem_data_r1 <= mem_data_r;
-mem_data_w1 <= mem_data_w;
-ir_dout1 <= ir_out;
+--mem_addr1 <= mem_addr;
+--mem_data_r1 <= mem_data_r;
+--mem_data_w1 <= mem_data_w;
+--ir_dout1 <= ir_out;
 
 -- Components
 alu1: alu port map(X=>alui1,Y=>alui2,out_p=>aluo,op_code=>aluc,do_xor => do_xor_c, C=>C,Z=>alu_zero);
@@ -103,15 +103,14 @@ mem : ram2_inst port map (clock => clk, wren => mem_rw, address => mem_addr(14 d
 --mem_addr_mux: mux2 port map (A0=>eab,A1=>prog_addr,s=>prog_en,D=>mem_addr);
 --mem_data_mux: mux4 port map (A0=>edb,A1=>prog_data,A2=>highZ,A3=>highZ,s=>mem_data_c,D=>mem_data);
 
-mem_addr <= prog_addr when prog_en = '1' or test_en = '1' 
+mem_addr <= prog_addr when test_en = '1' 
 				else eab;
 
 edb_r <= mem_data_r;
 prog_data_r <= mem_data_r; -- when prog_en='0' else highZ;
-mem_data_w <= edb_w when uc_rw = '1' and prog_en = '0'
-            else prog_data_w when uc_rw = '0' and prog_en = '1'
+mem_data_w <= edb_w when uc_rw = '1'
 				else zero;
-mem_rw <= prog_en or uc_rw; -- Mux hai
+mem_rw <= uc_rw; -- Mux hai
 
 -- Registers
 t1: DataRegister port map (Din=>t1_in,Dout=>alui1,enable=>t1_w,clk=>clk);

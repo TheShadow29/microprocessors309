@@ -33,13 +33,16 @@ architecture Behave of TestProcessor is
 
   signal prog_addr,prog_data_w,prog_data_r,prog_data, 
   mem_addr1,mem_data_r1,mem_data_w1,ir_dout1 : std_logic_vector(15 downto 0);
-  signal prog_en,test_en,proc_start,proc_done,proc_reset : std_logic;
+  signal prog_en,test_en,proc_start,proc_done,proc_reset,proc_not_reset,proc_not_start : std_logic;
   signal clk : std_logic := '0';
   
   
 	constant highZ : std_logic_vector(15 downto 0) := (others => 'Z');
 begin
-    clk <= not clk after 13 ns; -- assume 10ns clock.
+	proc_not_reset <= not(proc_reset);
+	proc_not_start <= not(proc_start);
+
+    clk <= not clk after 10 ns; -- assume 10ns clock.
 
   process 
     variable err_flag : boolean := false;
@@ -105,6 +108,7 @@ begin
 				test_en <= '1';
 				prog_data_w <= highZ;
 				wait until clk = '0';
+				wait until clk = '0';
             for i in 0 to 15 loop
               if (prog_data_r(i) /= to_std_logic(input_data(i))) then
                      write(OUTPUT_LINE,to_string("ERROR: in Checking Data, line "));
@@ -128,7 +132,7 @@ begin
 --  prog_data_r <= prog_data;
   dut : iitb_risc port map (prog_en=>prog_en,test_en=>test_en,prog_addr=>prog_addr,
 									 prog_data_w=>prog_data_w,prog_data_r=>prog_data_r,
-                            start=>proc_start, done=>proc_done, clk=>clk, reset=>proc_reset, 
+                            not_start=>proc_not_start, done=>proc_done, clk_50=>clk, not_reset=>proc_not_reset, 
 									 mem_addr1=>mem_addr1, mem_data_r1=>mem_data_r1, mem_data_w1=> mem_data_w1
 									 ,ir_dout1=>ir_dout1);
 

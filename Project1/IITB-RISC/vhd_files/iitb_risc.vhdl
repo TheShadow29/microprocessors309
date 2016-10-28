@@ -8,15 +8,15 @@ use work.all_components.all;
 
 entity iitb_risc is
 	port (
-		prog_en,test_en: in std_logic;
-		prog_addr: in std_logic_vector(15 downto 0);
-		prog_data_w: in std_logic_vector(15 downto 0);
-		prog_data_r: out std_logic_vector(15 downto 0);
+		--prog_en,test_en: in std_logic;
+		--prog_addr: in std_logic_vector(15 downto 0);
+		--prog_data_w: in std_logic_vector(15 downto 0);
+		--prog_data_r: out std_logic_vector(15 downto 0);
 				
-		start, clk, reset: in std_logic;
-		done : out std_logic;
-		op_code1 : out std_logic_vector(3 downto 0);
-		mem_data_r1,mem_data_w1,mem_addr1,ir_dout1 : out std_logic_vector(15 downto 0)
+		not_start, clk_50, not_reset: in std_logic;
+		done : out std_logic
+		--op_code1 : out std_logic_vector(3 downto 0);
+		--mem_data_r1,mem_data_w1,mem_addr1,ir_dout1 : out std_logic_vector(15 downto 0)
 	);
 end entity iitb_risc;
 
@@ -26,9 +26,29 @@ architecture Behave of iitb_risc is
 		signal a1_mux_c, d3_mux_c, a0_mux_c, tx_mux_c, condition_code:  std_logic_vector(1 downto 0);
 		signal a3_mux_c , t2_mux_c:  std_logic_vector(2 downto 0);
 		signal op_code :  std_logic_vector(3 downto 0);
+		signal clk, start, reset : std_logic ;
+		
+		signal test_en: std_logic := '0';
+		signal prog_addr: std_logic_vector(15 downto 0) := (others => '0');
+		--prog_data_w: in std_logic_vector(15 downto 0);
+		signal prog_data_r: std_logic_vector(15 downto 0);
 begin
 
-op_code1 <= op_code;
+process(reset,clk_50)
+begin
+	if (reset = '1') then
+		clk <= '0';
+	elsif (rising_edge(clk_50)) then
+		clk <= not(clk);
+	end if;
+end process;
+
+
+
+reset <= not(not_reset);
+start <= not(not_start);
+
+--op_code1 <= op_code;
 
 cp : control_path port map 
 		(
@@ -64,9 +84,9 @@ cp : control_path port map
 dp1 : data_path port map 
 		(
 			prog_addr => prog_addr,
-			prog_data_w => prog_data_w, 
+			--prog_data_w => prog_data_w, 
 			prog_data_r => prog_data_r, 
-			prog_en => prog_en,
+			--prog_en => prog_en,
 			test_en => test_en,
 			carry_flag => carry_flag,
 			zero_flag => zero_flag,
@@ -92,12 +112,12 @@ dp1 : data_path port map
 			reset => reset,
 			N => V,
 			uc_rw_c => uc_rw_c,
-			do_xor_c => do_xor_c,
+			do_xor_c => do_xor_c
 			
-			mem_addr1=>mem_addr1,
-			mem_data_r1=>mem_data_r1,
-			mem_data_w1=>mem_data_w1,
-			ir_dout1 => ir_dout1
+			--mem_addr1=>mem_addr1,
+			--mem_data_r1=>mem_data_r1,
+			--mem_data_w1=>mem_data_w1,
+			--ir_dout1 => ir_dout1
 		);
 		
 

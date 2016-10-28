@@ -89,15 +89,15 @@ package all_components is
 	
 	component iitb_risc is
 		port (
-			prog_en,test_en: in std_logic;
-			prog_addr: in std_logic_vector(15 downto 0);
-			prog_data_w: in std_logic_vector(15 downto 0);
-			prog_data_r: out std_logic_vector(15 downto 0);
+			--prog_en,test_en: in std_logic;
+			--prog_addr: in std_logic_vector(15 downto 0);
+			--prog_data_w: in std_logic_vector(15 downto 0);
+			--prog_data_r: out std_logic_vector(15 downto 0);
 			
-			start, clk, reset: in std_logic;
-			done: out std_logic;
-			op_code1: out std_logic_vector(3 downto 0);
-			mem_data_r1,mem_data_w1,mem_addr1,ir_dout1 : out std_logic_vector(15 downto 0)
+			not_start, clk_50, not_reset: in std_logic;
+			done: out std_logic
+			--op_code1: out std_logic_vector(3 downto 0);
+			--mem_data_r1,mem_data_w1,mem_addr1,ir_dout1 : out std_logic_vector(15 downto 0)
 		);
 	end component iitb_risc;
 	
@@ -147,9 +147,9 @@ package all_components is
 	component data_path is
 	port 
 	(
-		prog_en,test_en: in std_logic;
+		test_en: in std_logic;
 		prog_addr: in std_logic_vector(15 downto 0);
-		prog_data_w: in std_logic_vector(15 downto 0);
+		--prog_data_w: in std_logic_vector(15 downto 0);
 		prog_data_r: out std_logic_vector(15 downto 0);
 		a1_mux_c : in std_logic_vector(1 downto 0);
 		a2_mux_c : in std_logic;
@@ -174,9 +174,9 @@ package all_components is
 		uc_rw_c : in std_logic;
 		op_code : out std_logic_vector(3 downto 0);
 		condition_code : out std_logic_vector(1 downto 0);
-		N : out std_logic;
+		N : out std_logic
 		
-		mem_data_r1,mem_data_w1,mem_addr1,ir_dout1 : out std_logic_vector(15 downto 0)
+		--mem_data_r1,mem_data_w1,mem_addr1,ir_dout1 : out std_logic_vector(15 downto 0)
 	);
 	end component;
 	component ram2_inst is

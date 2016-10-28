@@ -31,7 +31,6 @@
 *.pof
 *.qws
 *.smsg
-*_inst.vhd
 *_generation_script*
 *.done
 *.txt
