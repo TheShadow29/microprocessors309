@@ -58,7 +58,7 @@ begin
     
   begin
     proc_start <= '0';
-	 prog_en <= '1';
+	 prog_en <= '0';
 	 test_en <= '0';
 
     proc_reset<='1';

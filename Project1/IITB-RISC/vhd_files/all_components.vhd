@@ -179,5 +179,15 @@ package all_components is
 		mem_data_r1,mem_data_w1,mem_addr1,ir_dout1 : out std_logic_vector(15 downto 0)
 	);
 	end component;
+	component ram2_inst is
+		PORT
+		(
+			address		: IN STD_LOGIC_VECTOR (14 DOWNTO 0);
+			clock		: IN STD_LOGIC  := '1';
+			data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
+			wren		: IN STD_LOGIC ;
+			q		: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
+		);
+	end component;
 
 end all_components;
