@@ -94,7 +94,7 @@ begin
 
 -- Components
 alu1: alu port map(X=>alui1,Y=>alui2,out_p=>aluo,op_code=>aluc,do_xor => do_xor_c, C=>C,Z=>alu_zero);
-regfile1: RegFile port map(D1=>D1, D2=>D2, D3=>D3, A1=>A1, A2=>A2, A3=>A3, clk=>clk, WR=>RF_WE);
+regfile1: RegFile port map(D1=>D1, D2=>D2, D3=>D3, A1=>A1, A2=>A2, A3=>A3, clk=>clk,reset=>reset, WR=>RF_WE);
 pri_enc : PriorityEncoder port map(x => T_out, s=>pe,N => N, Tn=>Tn);
 mem : ram2_inst port map (clock => clk, wren => mem_rw, address => mem_addr(14 downto 0), q => mem_data_r, data=>mem_data_w);
 
@@ -113,21 +113,21 @@ mem_data_w <= edb_w when uc_rw = '1'
 mem_rw <= uc_rw; -- Mux hai
 
 -- Registers
-t1: DataRegister port map (Din=>t1_in,Dout=>alui1,enable=>t1_w,clk=>clk);
-t2: DataRegister port map (Din=>t2_in,Dout=>alui2,enable=>t2_w,clk=>clk);
-t3: DataRegister port map (Din=>aluo,Dout=>t3_out,enable=>t3_w,clk=>clk);
-T: DataRegister port map (Din=>T_in,Dout=>T_out,enable=>T_w,clk=>clk);
+t1: DataRegister port map (Din=>t1_in,Dout=>alui1,enable=>t1_w,clk=>clk,reset=>reset);
+t2: DataRegister port map (Din=>t2_in,Dout=>alui2,enable=>t2_w,clk=>clk,reset=>reset);
+t3: DataRegister port map (Din=>aluo,Dout=>t3_out,enable=>t3_w,clk=>clk,reset=>reset);
+T: DataRegister port map (Din=>T_in,Dout=>T_out,enable=>T_w,clk=>clk,reset=>reset);
 
-di: DataRegister port map (Din=>edb_r,Dout=>di_out,enable=>di_w,clk=>clk);
+di: DataRegister port map (Din=>edb_r,Dout=>di_out,enable=>di_w,clk=>clk,reset=>reset);
 di_zero <= '1' when di_out = zero else '0';
 
-do: DataRegister port map (Din=>do_in,Dout=>edb_w,enable=>do_w,clk=>clk);
+do: DataRegister port map (Din=>do_in,Dout=>edb_w,enable=>do_w,clk=>clk,reset=>reset);
 --ao: DataRegister port map (Din=>ao_in,Dout=>eab,enable=>ao_w,clk=>clk);
 eab <= ao_in when (ao_w = '1') else zero;
-ir: DataRegister port map (Din=>edb_r,Dout=>ir_out,enable=>ir_w,clk=>clk);
+ir: DataRegister port map (Din=>edb_r,Dout=>ir_out,enable=>ir_w,clk=>clk,reset=>reset);
 
-c1: data_register_bin port map (Din => C, Dout => carry_flag, enable => car_w, clk => clk);
-z1: data_register_bin port map (Din => Z, Dout => zero_flag, enable => zer_w, clk => clk);
+c1: data_register_bin port map (Din => C, Dout => carry_flag, enable => car_w, clk => clk,reset=>reset);
+z1: data_register_bin port map (Din => Z, Dout => zero_flag, enable => zer_w, clk => clk,reset=>reset);
 
 Z <= di_zero when d3_c = "01" else alu_zero;
 

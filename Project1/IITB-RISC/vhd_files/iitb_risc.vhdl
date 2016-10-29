@@ -42,8 +42,7 @@ begin
 		clk <= not(clk);
 	end if;
 end process;
-
-
+--clk <= clk_50;
 
 reset <= not(not_reset);
 start <= not(not_start);

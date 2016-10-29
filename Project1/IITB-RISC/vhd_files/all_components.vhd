@@ -62,13 +62,13 @@ package all_components is
 		--n bit register
 		port (Din: in std_logic_vector;
 				Dout: out std_logic_vector;
-				clk, enable: in std_logic);
+				clk, reset, enable: in std_logic);
 	end component;
 	
 	component data_register_bin is
 	port (Din: in std_logic;
 	      Dout: out std_logic;
-	      clk, enable: in std_logic);
+	      clk, reset, enable: in std_logic);
 	end component;
 	
 	component RegFile is
@@ -76,7 +76,7 @@ package all_components is
 			D1,D2: out std_logic_vector(15 downto 0);
 			A1,A2,A3 :in std_logic_vector(2 downto 0);
 			D3 :in std_logic_vector(15 downto 0);
-			clk, WR: in std_logic
+			clk, WR, reset: in std_logic
 		 );
 	end component RegFile;
 	

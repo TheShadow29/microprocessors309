@@ -8,7 +8,7 @@ entity RegFile is
 		D1,D2: out std_logic_vector(15 downto 0);
 		A1,A2,A3 :in std_logic_vector(2 downto 0);
 		D3 :in std_logic_vector(15 downto 0);
-		clk, WR: in std_logic
+		clk, WR, reset: in std_logic
 	 );
 end entity RegFile;
 architecture Behave of RegFile is
@@ -20,7 +20,7 @@ begin
 
 RegFile:
 for I in 0 to 7 generate
-	RegFileX: DataRegister port map (Dout=>R(I),Enable=>En(I),Din=>D3,clk=>clk);
+	RegFileX: DataRegister port map (Dout=>R(I),Enable=>En(I),Din=>D3,clk=>clk,reset=>reset);
 end generate RegFile;
 
 D1Mux: mux8 port map (A0=>R(0),

@@ -1,3 +1,19 @@
+org 0x50
+jal_branch:
+	jlr r5,r6
+	db 0xffff
+
+org 0x100
+data1:
+	db 0x0105
+	db 0x0e27
+
+org 0x180
+data2:
+	db 0xffff
+	db 0x0
+
+org 0x00
 lhi r0,0x2
 lw r1,r0,0x0
 lw r2,r0,0x1
@@ -5,7 +21,7 @@ lw r2,r0,0x1
 add r3,r1,r2
 sw r3,r0,0x2
 
-ndu r3,r1,r2
+ndu r3,r1,r3
 sw r3,r0,0x3
 
 adi r3,r1,0x2f
@@ -25,22 +41,5 @@ ndz r5,r1,r2
 lw r1,r0,0x1
 adz r6,r1,r2
 
-
-beq r1,r2,0x3e
-beq r1,r3,0x3d
-
-org 0x50
-jlr r5,r6
-db 0xffff
-
-org 0x100
-db 0x0105
-db 0x0e27
-
-org 0x180
-db 0xffff
-db 0x0
-
-org 0x100
-test 0x105
-test 0x105
+beq r1,r2,#jal_branch
+beq r1,r3,#jal_branch
