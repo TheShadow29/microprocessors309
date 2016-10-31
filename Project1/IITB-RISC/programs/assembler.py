@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from __future__ import print_function
 import sys,re
 
 class AssemblerError(Exception):
@@ -143,17 +144,34 @@ instr_rst = create_instr_type("instr_rst","",(),"{:s}1111111111111111",None)
 
 # Execution starts
 
-mif_header = '''DEPTH = 32768;                   -- The size of memory in words
-WIDTH = 16;                    -- The size of data in bits
+mif_header = '''DEPTH = 32768;                -- The size of memory in words
+WIDTH = 16;                   -- The size of data in bits
 ADDRESS_RADIX = BIN;          -- The radix for address values
 DATA_RADIX = BIN;             -- The radix for data values
 CONTENT                       -- start of (address : data pairs)
 BEGIN
 '''
 
+help_text = '''IITB-RISC instruction set assembler
+
+Usage: assembler.py <assembly_file> [output_mif]
+
+assembly_file: path to file you want to assemble
+output_mif: path to output mif file. If not passed, outputs to stdout
+'''
+
 def main():
     errored = False
+
+    if len(sys.argv) == 1:
+        print(help_text,file=sys.stderr)
+        return
+
     asm = sys.argv[1];
+    if len(sys.argv) > 2:
+        output_file = open(sys.argv[2],'w')
+    else:
+        output_file = sys.stdout
 
     program = []
     testcases = []
@@ -163,8 +181,10 @@ def main():
     with open(asm,'r') as asm_file:
         for line_no,line in enumerate(asm_file):
             line = line.strip()
+            line = line.split(';')[0]
             if line:
                 tokens = re.split(' |,',line);
+                tokens = [t for t in tokens if t]
 
                 # check for Label assignment
                 if len(tokens) == 1 and tokens[0][-1] == ':':
@@ -186,9 +206,9 @@ def main():
                         e = AssemblerError("Invalid instruction: %s" % tokens[0],tokens[0])
 
                     t_ind = e_line.index(e.token)
-                    print(e_line)
-                    print(" "*t_ind + "^")
-                    print("    %s" % e)
+                    print(e_line,file=sys.stderr)
+                    print(" "*t_ind + "^",file=sys.stderr)
+                    print("    %s" % e,file=sys.stderr)
                     errored = True
                     continue
 
@@ -203,11 +223,11 @@ def main():
                     curr_addr += 1
 
     if not errored:
-        print(mif_header)
+        print(mif_header, file=output_file)
         for p in program:
-            print('{:015b} : {:016b};'.format(p['addr'],p['byte']))
-        print('END;')
-    #    print("Successfully assembled")
+            print('{:015b} : {:016b};'.format(p['addr'],p['byte']), file=output_file)
+        print('END;',file=output_file)
+        print("Successfully assembled")
 
 if __name__ == '__main__':
     main()
