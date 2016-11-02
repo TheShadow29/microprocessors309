@@ -60,3 +60,6 @@ simulation/
 timing/
 testbench/
 *_sim/
+
+*.aux
+*.log
