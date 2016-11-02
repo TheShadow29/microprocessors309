@@ -1,5 +1,5 @@
 \documentclass{article}
-\usepackage[a4paper, tmargin=1in, bmargin=0.3in]{geometry}
+\usepackage[a4paper, tmargin=1in, bmargin=1in]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{parskip}
@@ -108,23 +108,28 @@ If NOP bit is set, all control signals are disabled for that stage.
 
 This block will compare \textbf{Rsrc} with \textbf{Rmem} and \textbf{Rwb} and
 output a control signal for mux to select the corresponding data.
+If \textbf{Rsrc} is equal to \textbf{R7}, we need to select the current PC.
 
 Also, if \textbf{LW} is set for Mem stage and \textbf{Rsrc} matches, we need to
 stall.
 
 Logic:
     \begin{lstlisting}
-        if(NOPmem == 1 && Rsrc == Rmem){
-            if (LW == 1) {
-                Stall;
-            } else {
-                Out = ADmem;
-            }
-        } else if(NOPwb == 1 && Rsrc == Rwb){
-            if (LW == 1) {
-                Stall;
-            } else {
-                Out = Dwb;
+        if(Rsrc == R7){
+            Out = PC;
+        } else {
+            if(NOPmem == 1 && Rsrc == Rmem){
+                if (LW == 1) {
+                    Stall;
+                } else {
+                    Out = ADmem;
+                }
+            } else if(NOPwb == 1 && Rsrc == Rwb){
+                if (LW == 1) {
+                    Stall;
+                } else {
+                    Out = Dwb;
+                }
             }
         }
 
@@ -179,6 +184,28 @@ Initialisation logic:
 When V = 1, then \textbf{Wdis} is on for previous two pipeline registers and PC
 so write is disabled and hence the next two instructions loaded are frozen in
 fetch and decode stage.
+
+\subsection*{PC update block}
+
+\includegraphics[scale=0.5]{pc}
+
+\textbf{Stall} will make all stages \textbf{NOP} so that no instructions are executed,
+and PC sets to branched value.
+\textbf{WenOUT} will enable the PC branch mux to take from \textbf{Dwb}.
+In normal case, \textbf{PCen} enables writing of \textbf{PC} to \textbf{R7}.
+
+Logic:
+    \begin{lstlisting}
+        if(NOP == 1){
+            if(WenIN == 1 && RD == R7){
+                PCen = 0;
+                WenOUT = 1;
+                Stall = 1;
+            } else {
+                PCen = 1;
+            }
+        }
+    \end{lstlisting}
 
 
 \section*{Control signals for each instruction}
