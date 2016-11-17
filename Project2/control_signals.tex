@@ -192,17 +192,62 @@ fetch and decode stage.
 \textbf{Stall} will make all stages \textbf{NOP} so that no instructions are executed,
 and PC sets to branched value.
 \textbf{WenOUT} will enable the PC branch mux to take from \textbf{Dwb}.
-In normal case, \textbf{PCen} enables writing of \textbf{PC} to \textbf{R7}.
+In normal case, \textbf{R7upd} enables writing of \textbf{PC} to \textbf{R7}.
 
 Logic:
     \begin{lstlisting}
         if(NOP == 1){
             if(WenIN == 1 && RD == R7){
-                PCen = 0;
+                R7upd = 0;
                 WenOUT = 1;
                 Stall = 1;
             } else {
-                PCen = 1;
+                R7upd = 1;
+            }
+        }
+    \end{lstlisting}
+
+
+\subsection*{History Block}
+
+\includegraphics[scale=0.5]{history_block}
+
+\textbf{PCin} is PC of the current fetched instruction.\\
+\textbf{BRen} is output control signal to choose whether to update PC from
+history table or not.\\
+\textbf{PCout} is the next PC for current PC in history table.\\
+
+\textbf{PCbr} is the PC of the \textbf{BEQ} instruction which may/may not branch.\\
+\textbf{Hin} is the action that has been taken by that \textbf{BEQ} instruction.\\
+
+\textbf{StallHist} is the control signal to flush and stall the pipeline if
+history bit mismatched.
+
+Internally, the \textbf{History Block} stores a history table with 
+\textbf{PC\_curr},\textbf{PC\_next} and \textbf{H\_curr}.
+
+Logic for \textbf{BRen},\textbf{PCout} and \textbf{StallHistory}:
+    \begin{lstlisting}
+        for(PC_curr,PC_next,H_curr in HistoryTable){
+            if(PCbr == PC_curr){
+                if(Hin != H_curr){
+                    H_curr = Hin;
+                    StallHistory = 1;
+
+                    // PC+1 if Hin = 0, else BEQ will update directly
+                    BRen = not(Hin);
+                    PCout = PCbr + 1; 
+
+                    break;
+                }
+
+            } else if(PCin == PC_curr){
+                if(H_curr == 1){
+                    BRen = 1;
+                    PCout = PC_next;
+                } else {
+                    BRen = 0;
+                }
             }
         }
     \end{lstlisting}
