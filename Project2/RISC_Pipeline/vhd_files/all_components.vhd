@@ -10,7 +10,7 @@ package all_components is
 			Fout : out std_logic_vector(15 downto 0);
 			Stall : out std_logic
 		);
-	end ForwardingUnit;
+	end component;
 	
 	component FlagForwardingUnit is
 		port (
@@ -19,5 +19,23 @@ package all_components is
 			
 			ForwardOut : out std_logic
 		);
-	end FlagForwardingUnit;
-end all_components;
+	end component;
+	component instruction_decoder is
+	port
+	(
+		clk : in std_logic;
+		ir_out : in std_logic_vector(15 downto 0);
+		op_code : out std_logic_vector(3 downto 0);
+		condition_code : out std_logic_vector(1 downto 0);
+		ra : out std_logic_vector(2 downto 0);
+		rb : out std_logic_vector(2 downto 0);
+		rc : out std_logic_vector(2 downto 0);
+		nine_bit_high : out std_logic_vector(15 downto 0);
+		nine_bit_imm : out std_logic_vector(15 downto 0);
+		six_bit_imm : out std_logic_vector(15 downto 0);
+		is_lhi : out std_logic;
+		is_jal : out std_logic;
+		is_lm_sm : out std_logic
+	);
+	end component;
+end package;

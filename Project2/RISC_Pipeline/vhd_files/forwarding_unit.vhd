@@ -27,7 +27,7 @@ begin
 		variable out_var : std_logic_vector(1 downto 0);
 		variable stall_var : std_logic;
 	begin
-		stall_var := 0;
+		stall_var := '0';
 		
 		if(Rsrc = "111") then
 			out_var := "11";
