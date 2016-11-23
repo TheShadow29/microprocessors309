@@ -28,6 +28,8 @@ architecture pipe of RISC_Pipeline is
 		signal nop_code,mem_w_c, mem_r_c, out_c, wen: std_logic;
 		signal a2c,rdc,alu_c, flag_c : std_logic_vector(1 downto 0);
 		signal a1c, dmem_c, cflag_c, zflag_c, zen, cen, imm, pc1, z_c: std_logic;
+		signal nop_bit_pc, wen_in, wen_out,stall, r7_upd : std_logic;
+		signal rd_pc : std_logic_vector(2 downto 0);
 begin
 	id : instruction_decoder port map 
 				(
@@ -76,4 +78,13 @@ begin
 					cen => cen,
 					zen => zen
 				);
+		pc_upd : pc_r7_update_block port map 
+			(
+				nop_bit => nop_bit_pc,
+				rd => rd_pc,
+				wen_in => wen_in,
+				wen_out => wen_out,
+				stall => stall,
+				r7_upd => r7_upd
+			);
 end architecture;
