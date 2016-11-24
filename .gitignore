@@ -63,3 +63,5 @@ testbench/
 
 *.aux
 *.log
+
+*.xlsx#
