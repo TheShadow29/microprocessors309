@@ -7,9 +7,9 @@ use work.all_components.all;
 -- Will output 0 if nop==1
 entity ControlWord is
 	port (
-		cin: std_logic_vector;
-		cout: std_logic_vector;
-		nop: std_logic
+		cin: in std_logic_vector;
+		cout: out std_logic_vector;
+		nop: in std_logic
 	);
 end entity ControlWord;
 

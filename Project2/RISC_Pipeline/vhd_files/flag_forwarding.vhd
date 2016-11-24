@@ -16,7 +16,7 @@ end FlagForwardingUnit;
 
 architecture Selector of FlagForwardingUnit is
 begin
-	process(Flag) is
+	process(Flag, Cmem, Zmem) is
 		variable out_var : std_logic;
 	begin
 		out_var := '0';

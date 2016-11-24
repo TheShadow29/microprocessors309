@@ -12,7 +12,7 @@ package all_components is
 	component Incrementer is
 		 port(
 			  x: in std_logic_vector(15 downto 0);
-			  z: out std_logic_vector(15 downto 0);
+			  z: out std_logic_vector(15 downto 0)
 		 );
 	end component;
 	
@@ -22,7 +22,7 @@ package all_components is
 				 N : out std_logic;
 				 Tn: out std_logic_vector(7 downto 0)
 			) ;
-	end PriorityEncoder ;
+	end component PriorityEncoder ;
 	
 	component program_rom is
 		PORT
@@ -42,11 +42,11 @@ package all_components is
 			wren		: IN STD_LOGIC ;
 			q		: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
 		);
-	END data_ram;
+	END component data_ram;
 	
 	component ForwardingUnit is
 		port (
-			Rsrc, Rmem, Rwb : in std_logic_vector(3 downto 0);
+			Rsrc, Rmem, Rwb : in std_logic_vector(2 downto 0);
 			NOPmem, NOPwb, LW : in std_logic;
 			Idef, Imem, Iwb, Ipc : in std_logic_vector(15 downto 0);
 			Fout : out std_logic_vector(15 downto 0);
@@ -72,7 +72,20 @@ package all_components is
 			op_code : in std_logic;
 			do_xor : in std_logic
 		);
-	end alu;
+	end component alu;
+	
+	component Adder is
+		 -- cin    -> carry in
+		 -- x, y   -> 8 bit inputs
+		 -- z      -> sum output
+		 -- cout   -> carry out
+		 port(
+			  cin: in std_logic;
+			  x, y: in std_logic_vector(15 downto 0);
+			  z: out std_logic_vector(15 downto 0);
+			  cout: out std_logic
+		 );
+	end component;
 	
 	component FlagForwardingUnit is
 		port (
@@ -137,9 +150,9 @@ package all_components is
 	
 	component ControlWord is
 		port (
-			cin: std_logic_vector;
-			cout: std_logic_vector;
-			nop: std_logic
+			cin: in std_logic_vector;
+			cout: out std_logic_vector;
+			nop: in std_logic
 		);
 	end component ControlWord;
 
@@ -154,4 +167,40 @@ package all_components is
 			r7_upd : out std_logic
 		);
 	end component;
+	
+	component mux2 is
+		port 
+		(
+			A0,A1 : in std_logic_vector;
+			s : in std_logic;
+			D : out std_logic_vector
+		);
+	end component;
+	
+	component mux4 is
+		port 
+		(
+			A0,A1,A2,A3 : in std_logic_vector;
+			s : in std_logic_vector(1 downto 0);
+			D : out std_logic_vector
+		);
+	end component;
+	
+	component mux8 is
+		port 
+		(
+			A0,A1,A2,A3,A4,A5,A6,A7 : in std_logic_vector;
+			s : in std_logic_vector(2 downto 0);
+			D : out std_logic_vector
+		);
+	end component;
+	
+	component Decoder8 is
+		port (
+			A: in std_logic_vector(2 downto 0);
+			OE: in std_logic;
+			O: out std_logic_vector(7 downto 0)
+		);
+	end component Decoder8;
+
 end package;

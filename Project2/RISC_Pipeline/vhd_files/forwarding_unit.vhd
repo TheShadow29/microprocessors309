@@ -11,7 +11,7 @@ use ieee.std_logic_1164.all;
 -- Stall : Whether we need to stall for LW or not 
 entity ForwardingUnit is
 	port (
-		Rsrc, Rmem, Rwb : in std_logic_vector(3 downto 0);
+		Rsrc, Rmem, Rwb : in std_logic_vector(2 downto 0);
 		NOPmem, NOPwb, LW : in std_logic;
 		Idef, Imem, Iwb, Ipc : in std_logic_vector(15 downto 0);
 		Fout : out std_logic_vector(15 downto 0);

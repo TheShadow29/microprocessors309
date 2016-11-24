@@ -30,7 +30,7 @@ for I in 0 to 6 generate
 end generate RegFile;
 
 PCen <= R7upd or En(7);
-PC: DataRegister port map (Dout=>R(7),Enable=>PCen,Din=>WriteData,clk=>clk);
+PC_register: DataRegister port map (Dout=>R(7),Enable=>PCen,Din=>WriteData,clk=>clk);
 
 D1Mux: mux8 port map (A0=>R(0),
 							 A1=>R(1),

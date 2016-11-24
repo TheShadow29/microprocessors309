@@ -67,7 +67,7 @@ library work;
 entity Incrementer is
     port(
         x: in std_logic_vector(15 downto 0);
-        z: out std_logic_vector(15 downto 0);
+        z: out std_logic_vector(15 downto 0)
     );
 end entity;
 architecture Behave of Incrementer is
