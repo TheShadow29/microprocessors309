@@ -26,7 +26,7 @@ begin
 			stall_var := '0';
 			wen_out_var := '0';
 			r7_upd_var := '0';
-			if (nop_bit = '1') then
+			if (nop_bit = '0') then
 				if (wen_in = '1' and rd = "111") then
 					stall_var := '1';
 					wen_out_var := '1';
