@@ -202,5 +202,13 @@ package all_components is
 			O: out std_logic_vector(7 downto 0)
 		);
 	end component Decoder8;
+	
+	component data_path is
+	port
+	(
+		clk, reset, start : in std_logic;
+		done : out std_logic
+	);
+	end component;
 
 end package;
