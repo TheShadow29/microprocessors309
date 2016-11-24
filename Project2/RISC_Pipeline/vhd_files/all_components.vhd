@@ -143,12 +143,15 @@ package all_components is
 		);
 	end component ControlWord;
 
-	component PCUpdate is
-	   port (
-			RD : in std_logic_vector(2 downto 0);
-			WENin : in std_logic;
-			
-			WENout, R7upd, Stall : out std_logic;
+	component pc_r7_update_block is
+		port
+		(
+			nop_bit : in std_logic;
+			rd : in std_logic_vector(2 downto 0);
+			wen_in : in std_logic;
+			wen_out : out std_logic;
+			stall : out std_logic;
+			r7_upd : out std_logic
 		);
 	end component;
 end package;

@@ -14,6 +14,7 @@ entity RISC_Pipeline is
 end entity;
 
 architecture pipe of RISC_Pipeline is
+
 		--signal ir_out : std_logic_vector(15 downto 0);
 		--signal op_code : std_logic_vector(3 downto 0);
 		--signal condition_code : std_logic_vector(1 downto 0);
@@ -544,13 +545,14 @@ wb_control: ControlWord port map
 		cout(2) => zen_writeback
 	);
 	
-pcupd_block: PCUpdate port map
+pcupd_block: pc_r7_update_block port map
    (
+		nop_bit => MWB_pipeline_out(0),
 		RD => MWB_pipeline_out(6 downto 4),
-		WENin => wen_writeback,
+		WEN_in => wen_writeback,
 		
-		WENout => pcupd_wen_out,
-		R7upd => pcupd_r7upd,
+		WEN_out => pcupd_wen_out,
+		R7_upd => pcupd_r7upd,
 		Stall => pcupd_stall
 	);
 	
