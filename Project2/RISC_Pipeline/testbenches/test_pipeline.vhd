@@ -61,34 +61,35 @@ begin
 --		variable LINE_COUNT: integer := 0;
 
 		begin
-			instr_start <= '0';
-			instr_done <= '0';
+			--instr_start <= '0';
+			--instr_done <= '0';
 			prog_reset <= '1';
 			wait until clk = '0';
 			prog_reset<='0';
-			while (I < 1) loop
-				instr_start <= '1';
-				wait until clk = '1';
-				instr_start <= '0';
-				readline(INFILE,INPUT_LINE);
-				read(INPUT_LINE,inp_addr);
-				if(inp_addr_bv = one16)then
-					exit;
-				end if;
-				wait until instr_done = '1';
-				for k in 0 to 15 loop
-					inp_addr(i) <= inp_addr_bv(i);
-				end loop;
+			wait for 3 ms;
+			--while (I < 1) loop
+			--	--instr_start <= '1';
+			--	--wait until clk = '1';
+			--	--instr_start <= '0';
+			--	--readline(INFILE,INPUT_LINE);
+			--	--read(INPUT_LINE,inp_addr);
+			--	--if(inp_addr_bv = one16)then
+			--	--	exit;
+			--	--end if;
+			--	--wait until instr_done = '1';
+			--	--for k in 0 to 15 loop
+			--	--	inp_addr(i) <= inp_addr_bv(i);
+			--	--end loop;
 				
-				pc_count_var := pc_count_var + 1;
+			--	--pc_count_var := pc_count_var + 1;
 				
-				write(OUTPUT_LINE,to_string("Instruction "));
-				write(OUTPUT_LINE,pc_count_var);
-				write(OUTPUT_LINE," ");
-				write(OUTPUT_LINE,inp_addr);
-				write(OUTPUT_LINE," exec done");
-				writeline(OUTFILE,OUTPUT_LINE);
-			end loop;
+			--	--write(OUTPUT_LINE,to_string("Instruction "));
+			--	--write(OUTPUT_LINE,pc_count_var);
+			--	--write(OUTPUT_LINE," ");
+			--	--write(OUTPUT_LINE,inp_addr);
+			--	--write(OUTPUT_LINE," exec done");
+			--	--writeline(OUTFILE,OUTPUT_LINE);
+			--end loop;
 				
 		end process;
 dut : RISC_Pipeline port map (clk => clk, reset => prog_reset, start => instr_start, done => instr_done);
