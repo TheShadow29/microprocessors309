@@ -9,6 +9,13 @@ package all_components is
 				clk, enable: in std_logic);
 	end component;
 	
+	component PipelineDataRegister is
+		--n bit register
+		port (Din: in std_logic_vector;
+				Dout: out std_logic_vector;
+				clk, enable: in std_logic);
+	end component;
+	
 	component Incrementer is
 		 port(
 			  x: in std_logic_vector(15 downto 0);
@@ -80,10 +87,8 @@ package all_components is
 		 -- z      -> sum output
 		 -- cout   -> carry out
 		 port(
-			  cin: in std_logic;
 			  x, y: in std_logic_vector(15 downto 0);
-			  z: out std_logic_vector(15 downto 0);
-			  cout: out std_logic
+			  z: out std_logic_vector(15 downto 0)
 		 );
 	end component;
 	
@@ -149,9 +154,12 @@ package all_components is
 	end component;
 	
 	component ControlWord is
+		generic (
+			size : integer
+		);
 		port (
-			cin: in std_logic_vector;
-			cout: out std_logic_vector;
+			cin: in std_logic_vector(size - 1 downto 0);
+			cout: out std_logic_vector(size - 1 downto 0);
 			nop: in std_logic
 		);
 	end component ControlWord;
@@ -209,6 +217,25 @@ package all_components is
 		clk, reset, start : in std_logic;
 		done : out std_logic
 	);
+	end component;
+	
+	component history_block is
+		port (
+				pc_br, pc_br_next : in std_logic_vector(15 downto 0);
+				hin : in std_logic;
+				pc_in : in std_logic_vector(15 downto 0);
+				stall_hist : out std_logic;
+				br_en : out std_logic;
+				pc_out : out std_logic_vector(15 downto 0)
+			);
+	end component;
+
+	component RISC_Pipeline is
+		port
+		(
+			clk, reset, start : in std_logic;
+			done : out std_logic
+		);
 	end component;
 
 end package;

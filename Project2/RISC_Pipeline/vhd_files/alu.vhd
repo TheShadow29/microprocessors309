@@ -11,8 +11,8 @@ entity alu is
 	port
 	(
 		X, Y : in std_logic_vector(15 downto 0);
-		out_p : out std_logic_vector(15 downto 0);
-		C, Z : out std_logic;
+		out_p : out std_logic_vector(15 downto 0) := (others => '0');
+		C, Z : out std_logic := '0';
 		op_code : in std_logic;
 		do_xor : in std_logic
 	);

@@ -17,12 +17,13 @@ architecture Behave of RegFile is
 	
 	signal R: RegArray(7 downto 0);
 	signal En: std_logic_vector(7 downto 0);
-	signal WriteData: std_logic_vector(15 downto 0);
+	signal WriteData, WriteDataPC: std_logic_vector(15 downto 0);
 	signal WenDecoderEn, PCen: std_logic;
 begin
 
-WriteData <= PC when R7upd = '1' else
-				 D3;
+WriteDataPC <= PC when R7upd = '1' else
+				   D3;
+WriteData <= D3;
 
 RegFile:
 for I in 0 to 6 generate
@@ -30,7 +31,7 @@ for I in 0 to 6 generate
 end generate RegFile;
 
 PCen <= R7upd or En(7);
-PC_register: DataRegister port map (Dout=>R(7),Enable=>PCen,Din=>WriteData,clk=>clk);
+PC_register: DataRegister port map (Dout=>R(7),Enable=>PCen,Din=>WriteDataPC,clk=>clk);
 
 D1Mux: mux8 port map (A0=>R(0),
 							 A1=>R(1),
@@ -54,7 +55,7 @@ D2Mux: mux8 port map (A0=>R(0),
 							 s=>A2,
 							 D=>D2);
 
-WenDecoderEn <= WR and not(R7upd);
+WenDecoderEn <= WR; -- and not(R7upd);
 decoder: Decoder8 port map (A=>A3,O=>En,OE=>WenDecoderEn);
 
 end Behave;

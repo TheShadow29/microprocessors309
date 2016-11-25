@@ -34,9 +34,9 @@ begin
 		else
 			if(LW = '1') then
 				stall_var := '1';
-			elsif(NOPmem = '1' and Rsrc = Rmem) then
+			elsif(NOPmem = '0' and Rsrc = Rmem) then
 				out_var := "10";
-			elsif(NOPwb = '1' and Rsrc = Rwb) then
+			elsif(NOPwb = '0' and Rsrc = Rwb) then
 				out_var := "01";
 			else
 				out_var := "00";
@@ -47,7 +47,7 @@ begin
 		Stall <= stall_var;
 	end process;
 
-	Fout <= Idef when out_select = "11" else 
+	Fout <= Ipc when out_select = "11" else 
 	        Imem when out_select = "10" else
 			  Iwb  when out_select = "01" else
 			  Idef;
