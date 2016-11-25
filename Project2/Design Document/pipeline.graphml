@@ -4376,6 +4376,23 @@ Hist<y:LabelModel>
         </y:ShapeNode>
       </data>
     </node>
+    <node id="n199">
+      <data key="d6">
+        <y:ShapeNode>
+          <y:Geometry height="30.0" width="17.616352201257655" x="914.9741425753606" y="310.3995798938679"/>
+          <y:Fill color="#3366FF" transparent="false"/>
+          <y:BorderStyle hasColor="false" raised="false" type="line" width="1.0"/>
+          <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="17.96875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="11.634765625" x="2.9907932881288843" y="6.015625">2<y:LabelModel>
+              <y:SmartNodeLabelModel distance="4.0"/>
+            </y:LabelModel>
+            <y:ModelParameter>
+              <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
+            </y:ModelParameter>
+          </y:NodeLabel>
+          <y:Shape type="rectangle"/>
+        </y:ShapeNode>
+      </data>
+    </node>
     <edge id="n37::e0" source="n37::n1" target="n37::n0">
       <data key="d10">
         <y:PolyLineEdge>
@@ -5365,7 +5382,7 @@ Hist<y:LabelModel>
     <edge id="e81" source="n122::n9" target="n81">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
+          <y:Path sx="0.0" sy="0.0" tx="-24.715690701814992" ty="3.4839641341243066">
             <y:Point x="1702.0054664103013" y="168.3684017736608"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
