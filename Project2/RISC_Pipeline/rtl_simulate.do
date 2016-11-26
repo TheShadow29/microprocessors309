@@ -38,8 +38,8 @@ sim:/test_pipeline/dut/dp/done \
 sim:/test_pipeline/dut/dp/pc_fetch_in \
 sim:/test_pipeline/dut/dp/pc_fetch_out \
 sim:/test_pipeline/dut/dp/pc_fetch_p1 \
-sim:/test_pipeline/dut/dp/rom_data \
 sim:/test_pipeline/dut/dp/history_pcout \
+sim:/test_pipeline/dut/dp/rom_data \
 sim:/test_pipeline/dut/dp/pc_fetch_enable \
 sim:/test_pipeline/dut/dp/FD_pipeline_en \
 sim:/test_pipeline/dut/dp/history_bren \
@@ -68,11 +68,14 @@ sim:/test_pipeline/dut/dp/PE_regread \
 sim:/test_pipeline/dut/dp/regfile_d1 \
 sim:/test_pipeline/dut/dp/regfile_d2 \
 sim:/test_pipeline/dut/dp/PE_zp_regread \
+sim:/test_pipeline/dut/dp/d1_regread_jlr \
 sim:/test_pipeline/dut/dp/jlr_regread \
 sim:/test_pipeline/dut/dp/a1c_regread \
 sim:/test_pipeline/dut/dp/lmsm_regread \
 sim:/test_pipeline/dut/dp/dmemc_regread \
 sim:/test_pipeline/dut/dp/V_regread \
+sim:/test_pipeline/dut/dp/freeze_jlr \
+sim:/test_pipeline/dut/dp/RRE_pipeline_en \
 sim:/test_pipeline/dut/dp/a2c_regread \
 sim:/test_pipeline/dut/dp/rdc_regread \
 sim:/test_pipeline/dut/dp/Txn_regread \
@@ -91,10 +94,14 @@ sim:/test_pipeline/dut/dp/alu2_exec_stall \
 sim:/test_pipeline/dut/dp/dmem_exec_stall \
 sim:/test_pipeline/dut/dp/alu_c \
 sim:/test_pipeline/dut/dp/alu_z \
-sim:/test_pipeline/dut/dp/stall_flagfwd \
+sim:/test_pipeline/dut/dp/flagfwd_stall \
+sim:/test_pipeline/dut/dp/nop_flagfwd \
 sim:/test_pipeline/dut/dp/nop_exec \
+sim:/test_pipeline/dut/dp/wen_exec \
 sim:/test_pipeline/dut/dp/aluc_exec \
 sim:/test_pipeline/dut/dp/flagc_exec \
+sim:/test_pipeline/dut/dp/rd_exec \
+sim:/test_pipeline/dut/dp/exec_control_in \
 sim:/test_pipeline/dut/dp/alu1_exec \
 sim:/test_pipeline/dut/dp/alu2_exec \
 sim:/test_pipeline/dut/dp/dmem_exec \
@@ -113,9 +120,11 @@ sim:/test_pipeline/dut/dp/zc_memory \
 sim:/test_pipeline/dut/dp/c_memory \
 sim:/test_pipeline/dut/dp/z_memory \
 sim:/test_pipeline/dut/dp/ram_z \
+sim:/test_pipeline/dut/dp/wen_memory \
 sim:/test_pipeline/dut/dp/ram_dout \
 sim:/test_pipeline/dut/dp/ad_memory \
 sim:/test_pipeline/dut/dp/rd_memory \
+sim:/test_pipeline/dut/dp/memory_control_in \
 sim:/test_pipeline/dut/dp/MWB_pipeline_in \
 sim:/test_pipeline/dut/dp/MWB_pipeline_out \
 sim:/test_pipeline/dut/dp/cen_writeback \
@@ -134,8 +143,7 @@ sim:/test_pipeline/dut/dp/one_16bit \
 sim:/test_pipeline/dut/dp/zero_16bit \
 sim:/test_pipeline/dut/dp/register_file/R \
 sim:/test_pipeline/dut/dp/register_file/D3 \
-sim:/test_pipeline/dut/dp/register_file/A3 \
-sim:/test_pipeline/dut/dp/register_file/WR
+sim:/test_pipeline/dut/dp/register_file/A3
 
 view structure
 view signals

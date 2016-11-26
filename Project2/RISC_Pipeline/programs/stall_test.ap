@@ -1,0 +1,7 @@
+lhi r1, 0x1
+adi r0, r0, 0x11
+lw r0, r0, 0x0
+
+adz r2, r0, r1
+adi r3, r3, 0x2
+adc r3, r2, r1

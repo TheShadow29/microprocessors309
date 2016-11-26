@@ -17,8 +17,8 @@ architecture Behave of RegFile is
 	
 	signal R: RegArray(7 downto 0);
 	signal En: std_logic_vector(7 downto 0);
-	signal WriteData, WriteDataPC: std_logic_vector(15 downto 0);
-	signal WenDecoderEn, PCen: std_logic;
+	signal WriteData, WriteDataPC, D1_tmp, D2_tmp: std_logic_vector(15 downto 0);
+	signal WenDecoderEn, PCen, D1_fwd, D2_fwd: std_logic;
 begin
 
 WriteDataPC <= PC when R7upd = '1' else
@@ -42,7 +42,7 @@ D1Mux: mux8 port map (A0=>R(0),
 							 A6=>R(6),
 							 A7=>R(7),
 							 s=>A1,
-							 D=>D1);
+							 D=>D1_tmp);
 							 
 D2Mux: mux8 port map (A0=>R(0),
 							 A1=>R(1),
@@ -53,10 +53,16 @@ D2Mux: mux8 port map (A0=>R(0),
 							 A6=>R(6),
 							 A7=>R(7),
 							 s=>A2,
-							 D=>D2);
+							 D=>D2_tmp);
 
 WenDecoderEn <= WR; -- and not(R7upd);
 decoder: Decoder8 port map (A=>A3,O=>En,OE=>WenDecoderEn);
+
+D1_fwd <= '1' when A1 = A3 else '0';
+D2_fwd <= '1' when A2 = A3 else '0';
+
+D1 <= D3 when D1_fwd = '1' else D1_tmp;
+D2 <= D3 when D2_fwd = '1' else D2_tmp;
 
 end Behave;
 ---------------------------

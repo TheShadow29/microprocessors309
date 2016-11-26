@@ -52,15 +52,28 @@ package all_components is
 	END component data_ram;
 	
 	component ForwardingUnit is
-		port (
-			Rsrc, Rmem, Rwb : in std_logic_vector(2 downto 0);
-			NOPmem, NOPwb, LW : in std_logic;
-			Idef, Imem, Iwb, Ipc : in std_logic_vector(15 downto 0);
-			Fout : out std_logic_vector(15 downto 0);
-			Stall : out std_logic
-		);
+	port (
+		Rsrc, Rmem, Rwb : in std_logic_vector(2 downto 0);
+		NOPmem, NOPwb, LW : in std_logic;
+		Idef, Imem, Iwb, Ipc : in std_logic_vector(15 downto 0);
+		Wen_mem, Wen_wb : in std_logic;
+		Fout : out std_logic_vector(15 downto 0);
+		Stall : out std_logic
+	);
 	end component;
 	
+		
+	component forwarding_unit_jlr is
+		port (
+			Rsrc, Rmem, Rwb, Rexec : in std_logic_vector(2 downto 0);
+			NOPmem, NOPwb, NOPexec, LW, JLR: in std_logic;
+			Wen_exec, Wen_mem, Wen_wb : in std_logic;
+			Idef, Imem, Iwb, Ipc : in std_logic_vector(15 downto 0);
+			Fout : out std_logic_vector(15 downto 0);
+			Freeze : out std_logic
+		);
+	end component;
+		
 	component RegFile is
 		port(
 			D1,D2: out std_logic_vector(15 downto 0);
@@ -95,9 +108,9 @@ package all_components is
 	component FlagForwardingUnit is
 		port (
 			Flag : in std_logic_vector(1 downto 0);
-			Cmem, Zmem, NOPmem : in std_logic;
+			Cmem, Zmem, NOPmem, LW: in std_logic;
 			
-			ForwardOut : out std_logic
+			ForwardOut, Stall: out std_logic
 		);
 	end component;
 	
