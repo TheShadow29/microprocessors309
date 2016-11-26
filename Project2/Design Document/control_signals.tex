@@ -15,7 +15,7 @@ Ravi Sharma - 14D0700XX
 \date{November 2016}
 
 \begin{document}
-\maketitle
+\maketitle                      
  
 \section*{List of Control Signals}
 
@@ -118,18 +118,14 @@ Logic:
         if(Rsrc == R7){
             Out = PC;
         } else {
-            if(NOPmem == 1 && Rsrc == Rmem){
+            if(NOPmem == 0 && Rsrc == Rmem && Wen_mem == 1){
                 if (LW == 1) {
                     Stall;
                 } else {
                     Out = ADmem;
                 }
-            } else if(NOPwb == 1 && Rsrc == Rwb){
-                if (LW == 1) {
-                    Stall;
-                } else {
-                    Out = Dwb;
-                }
+            } else if(NOPwb == 0 && Rsrc == Rwb && Wen_wb == 1){
+                Out = Dwb;
             }
         }
 
@@ -142,6 +138,46 @@ write of all previous pipeline registers(and PC) so they stay in same state, and
 
 Current instruction in Exec stage will be recomputed using the forwarding values
 obtained from WB stage(which now has \textbf{LW} instruction).
+\subsection*{Forwarding Block for jlr and Freeze Logic}
+
+\includegraphics[scale=0.5]{forwarding_jlr}
+This works the same as the normal forwarding block except that this is now in the register read stage. It compares
+\textbf{Rsrc} with \textbf{Rexec}, \textbf{Rmem} and \textbf{Rwb} and output a control signal for the mux to select
+the corresponding data. Similarly if \textbf{Rsrc} is \textbf{R7} we need to select current PC. Also we will have
+to output to pipeline freeze logic. We may need to freeze the pipeline sometimes, because we might not have the
+required value of the register until the end of the execute stage. This is done by \textbf{freeze\_jlr} which will
+disable the write signals for all the Pipeline registers before RegRead, ie DRR and FD will be frozen.
+\\ Logic for Data Forwarding if there is JLR.
+\begin{lstlisting}
+
+    Out = D1;
+    if (Rsrc == R7)
+    {
+      Out = PC;
+    }
+    else
+    {
+      if (NOPexec == 0 && Rsrc == Rexec && Wen_exec==1)
+      {
+        freeze_jlr;
+      }
+      elsif (NOPmem == 0 && Rsrc == Rmem && Wen_mem == 1)
+      {
+        if(LW == 1)
+        {
+          freeze_jlr;
+        }
+        else
+        {
+          out = ADmem;
+        }
+      }
+      elsif (NOPwb == 0 && Rsrc == Rwb && Wen_wb == 1)
+      {
+        out = Dwb;
+      }
+    }
+    \end{lstlisting}
 
 \subsection*{Flag Forwarding Block}
 
