@@ -58,8 +58,8 @@ D2Mux: mux8 port map (A0=>R(0),
 WenDecoderEn <= WR; -- and not(R7upd);
 decoder: Decoder8 port map (A=>A3,O=>En,OE=>WenDecoderEn);
 
-D1_fwd <= '1' when A1 = A3 else '0';
-D2_fwd <= '1' when A2 = A3 else '0';
+D1_fwd <= '1' when A1 = A3 and WR = '1' else '0';
+D2_fwd <= '1' when A2 = A3 and WR = '1' else '0';
 
 D1 <= D3 when D1_fwd = '1' else D1_tmp;
 D2 <= D3 when D2_fwd = '1' else D2_tmp;

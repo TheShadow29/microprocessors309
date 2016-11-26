@@ -186,13 +186,16 @@ begin
 					mem_r_c_var := '1'; --read from mem
 					out_c_var := '1'; --output from mem
 					wen_var := '1';
+					imm_var := '1'; -- Take PE_zp in alu2_in
 				elsif (op_code = "0111") then --sm
 					is_lm_sm_var := '1'; --sm
 					a2c_var := "10"; --pe -> a2
 					a1c_var := '0'; --ra -> a1
 					alu_c_var := "00"; --addition
 					mem_w_c_var := '1'; --write to memory
-				end if;
+					dmem_c_var := '1';
+					imm_var := '1'; -- Take PE_zp in alu2_in
+ 				end if;
 			end if;
 			--RR controls
 			is_jlr <= is_jlr_var;

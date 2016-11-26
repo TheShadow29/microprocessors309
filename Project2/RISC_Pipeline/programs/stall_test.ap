@@ -5,3 +5,9 @@ lw r0, r0, 0x0
 adz r2, r0, r1
 adi r3, r3, 0x2
 adc r3, r2, r1
+
+sw r2, r1,0x01
+lw r4,r1,0x01
+adi r4,r4,0x3
+sw r4,r1,0x02
+lw r5,r1,0x02

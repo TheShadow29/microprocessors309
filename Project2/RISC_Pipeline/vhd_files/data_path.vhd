@@ -47,7 +47,8 @@ architecture data of data_path is
 		signal ra_irdecoder, rb_irdecoder, rc_irdecoder: std_logic_vector(2 downto 0) := (others=>'0');
 		signal ninebithigh_irdecoder, imm_irdecoder, pc_decode_p1: std_logic_vector(15 downto 0) := (others=>'0');
 		signal lmsm_imm_irdecoder: std_logic_vector(7 downto 0) := (others=>'0');
-		signal lhi_irdecoder, lmsm_irdecoder, jal_irdecoder, DRR_pipeline_en: std_logic := '0';
+		signal lhi_irdecoder, lmsm_irdecoder, jal_irdecoder,
+				 DRR_pipeline_en, DRR_pipeline_pe_en: std_logic := '0';
 		
 		-- 0 -> NOP
 		-- 3 downto 1 -> WB control
@@ -90,10 +91,11 @@ architecture data of data_path is
 		       beq_exec, zflagc_exec, cflagc_exec,
 				 stall_beq, stall_lw,
 				 alu1_exec_stall, alu2_exec_stall, dmem_exec_stall,
-				 alu_c, alu_z, nop_flagfwd, flagfwd_stall, nop_exec, wen_exec: std_logic := '0';
+				 alu_c, alu_z, nop_flagfwd,
+				 flagfwd_stall, nop_exec, wen_exec, LW_exec: std_logic := '0';
 		signal aluc_exec, flagc_exec: std_logic_vector(1 downto 0) := (others => '0');
 		signal rd_exec: std_logic_vector(2 downto 0) := (others => '0');
-		signal exec_control_in : std_logic_vector(10 downto 0) := (others => '0');
+		signal exec_control_in : std_logic_vector(11 downto 0) := (others => '0');
 		
 		signal alu1_exec, alu2_exec, dmem_exec,
 		       alu_in1, alu_in2, alu_out,
@@ -284,13 +286,31 @@ DRR_pipeline_in(0) <= pc_r7_upd_stall or
 							 
 DRR_pipeline: PipelineDataRegister port map
 	(
-		Din => DRR_pipeline_in,
-		Dout => DRR_pipeline_out,
+		Din => DRR_pipeline_in(35 downto 0),
+		Dout => DRR_pipeline_out(35 downto 0),
 		enable => DRR_pipeline_en,
 		clk => clk
 	);
+
+DRR_pipeline_pe: DataRegister port map
+	(
+		Din => DRR_pipeline_in(43 downto 36),
+		Dout => DRR_pipeline_out(43 downto 36),
+		enable => DRR_pipeline_pe_en,
+		clk => clk
+	);
+
+DRR_pipeline2: DataRegister port map
+	(
+		Din => DRR_pipeline_in(75 downto 44),
+		Dout => DRR_pipeline_out(75 downto 44),
+		enable => DRR_pipeline_en,
+		clk => clk
+	);
+		
 	
 DRR_pipeline_en <= not(V_regread or stall_lw or freeze_jlr);
+DRR_pipeline_pe_en <= not(stall_lw or freeze_jlr);
 
 ------------------ REGREAD STAGE ----------------------
 
@@ -355,15 +375,16 @@ jlr_forward: forwarding_unit_jlr port map
 		NOPmem => EM_pipeline_out(0),
 		NOPwb => MWB_pipeline_out(0),
 		
-		LW => lw_memory,
+		LWmem => lw_memory,
+		LWexec => lw_exec,
 		JLR => JLR_regread,
 		Wen_exec => wen_exec,
 		Wen_mem => wen_memory,
 		Wen_wb => wen_writeback,
 		
 		Idef => regfile_d1,
-		Imem => ad_memory,
-		Iwb => d_writeback,
+		Ialu_out => alu_out,
+		Imem_out => ram_dout,
 		Ipc => DRR_pipeline_out(75 downto 60),
 	
 		Fout => d1_regread_jlr,
@@ -406,23 +427,25 @@ RRE_pipeline_in(40 downto 38) <= DRR_pipeline_out(35 downto 33) when RDc_regread
 RRE_pipeline_in(43 downto 41) <= a1_regread;
 RRE_pipeline_in(59 downto 44) <= regfile_d1;
 RRE_pipeline_in(62 downto 60) <= a2_regread;------------need to take care in forwardingUnit
-RRE_pipeline_in(78 downto 63) <= regfile_d2 when lmsm_regread = '0' else
-                                 PE_zp_regread;
+RRE_pipeline_in(78 downto 63) <= regfile_d2;
 
 -- Imm --
-RRE_pipeline_in(94 downto 79) <= DRR_pipeline_out(59 downto 44);
+RRE_pipeline_in(94 downto 79) <= DRR_pipeline_out(59 downto 44) when lmsm_regread = '0' else
+                                 PE_zp_regread;
 -- PC --
 RRE_pipeline_in(110 downto 95) <= DRR_pipeline_out(75 downto 60);
 
 
 ----------------------------- EXEC STAGE -----------------------------------
+exec_control_in(11) <= RRE_pipeline_out(4);
 exec_control_in(10) <= RRE_pipeline_out(1);
 exec_control_in(9 downto 0) <= RRE_pipeline_out(18 downto 9);
 
-exec_control: ControlWord generic map (size=>11)  port map
+exec_control: ControlWord generic map (size=>12)  port map
 	(
 		nop => nop_exec,
 		cin => exec_control_in,
+		cout(11) => LW_exec,
 		cout(10) => wen_exec,
 		cout(9) => lhi_exec,
 		cout(8) => pc1_exec,

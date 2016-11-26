@@ -66,9 +66,9 @@ package all_components is
 	component forwarding_unit_jlr is
 		port (
 			Rsrc, Rmem, Rwb, Rexec : in std_logic_vector(2 downto 0);
-			NOPmem, NOPwb, NOPexec, LW, JLR: in std_logic;
+			NOPmem, NOPwb, NOPexec, LWmem, LWexec, JLR: in std_logic;
 			Wen_exec, Wen_mem, Wen_wb : in std_logic;
-			Idef, Imem, Iwb, Ipc : in std_logic_vector(15 downto 0);
+			Idef,  Ialu_out, Imem_out, Ipc : in std_logic_vector(15 downto 0);
 			Fout : out std_logic_vector(15 downto 0);
 			Freeze : out std_logic
 		);

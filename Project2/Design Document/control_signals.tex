@@ -140,7 +140,7 @@ Current instruction in Exec stage will be recomputed using the forwarding values
 obtained from WB stage(which now has \textbf{LW} instruction).
 \subsection*{Forwarding Block for jlr and Freeze Logic}
 
-\includegraphics[scale=0.5]{forwarding_jlr}
+\includegraphics[scale=1]{jlr_freeze_logic}
 This works the same as the normal forwarding block except that this is now in the register read stage. It compares
 \textbf{Rsrc} with \textbf{Rexec}, \textbf{Rmem} and \textbf{Rwb} and output a control signal for the mux to select
 the corresponding data. Similarly if \textbf{Rsrc} is \textbf{R7} we need to select current PC. Also we will have
@@ -159,25 +159,42 @@ disable the write signals for all the Pipeline registers before RegRead, ie DRR 
     {
       if (NOPexec == 0 && Rsrc == Rexec && Wen_exec==1)
       {
-        freeze_jlr;
-      }
-      elsif (NOPmem == 0 && Rsrc == Rmem && Wen_mem == 1)
-      {
-        if(LW == 1)
+        if(LWexec == 1)
         {
           freeze_jlr;
         }
         else
         {
-          out = ADmem;
+          out = ALUout;
         }
       }
-      elsif (NOPwb == 0 && Rsrc == Rwb && Wen_wb == 1)
+      elsif (NOPmem == 0 && Rsrc == Rmem && Wen_mem == 1)
       {
-        out = Dwb;
+        if (LWmem == 1)
+        {
+          out = Memout;
+        }
       }
     }
     \end{lstlisting}
+
+\subsection*{Forwarding Block Inside the Regfile}
+We note that there might be cases in which the value of the register in the regfile is updated
+by the writeback pipeline register, and at the same time the register is being read by A1 and A2.The
+value in the register will be updated at the end of the cycle. Therefore in case A1(or A2) is the
+same as A3, we need to do dataforwarding.
+Extra logic inside the Register File:
+    \begin{lstlisting}
+      if (A1 == A3)
+      {
+        D1 = D3;
+      }
+      if (A2 == A3)
+      {
+        D2 = D3;
+      }
+    \end{lstlisting}
+
 
 \subsection*{Flag Forwarding Block}
 
@@ -190,8 +207,18 @@ Logic:
         if(NOPmem == 1){
             if(Flag == C && Cmem == 0){
                 Dont execute;
-            } else if(Flag == Z && Zmem == 0){
-                Dont execute;
+            } else if(Flag == Z){
+              if (LW == 1)
+              {
+                Stall;
+              }
+              else
+              {
+                if (Zmem = 0)
+                {
+                  Dont execute;
+                } 
+              }
             }
         }
     \end{lstlisting}

@@ -34,8 +34,10 @@ begin
 	rb<=ir_out(8 downto 6);
 	rc<=ir_out(5 downto 3);
 	nine_bit_high_s(15 downto 7) <= ir_out(8 downto 0);
-	nine_bit_imm_s(8 downto 0) <= ir_out(8 downto 0);
-	six_bit_imm_s(5 downto 0) <= ir_out(5 downto 0);
+	nine_bit_imm_s(7 downto 0) <= ir_out(7 downto 0);
+	nine_bit_imm_s(15 downto 8) <= (others => ir_out(8));
+	six_bit_imm_s(4 downto 0) <= ir_out(4 downto 0);
+	six_bit_imm_s(15 downto 5) <= (others => ir_out(5));
 	nine_bit_high <= nine_bit_high_s;
 	sign_ext_imm <= nine_bit_imm_s when (is_se_9 = '1') else six_bit_imm_s;
 	eight_bit_lm_sm <= ir_out(7 downto 0);

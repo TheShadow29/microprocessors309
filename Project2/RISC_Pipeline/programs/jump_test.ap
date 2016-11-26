@@ -1,0 +1,19 @@
+org 0x20
+call:
+	adi r1, r1, 0x2
+	jlr r4,r1
+
+org 0x0
+lhi r0, 0x01
+adi r0, r0, 0x1f
+adi r0, r0, 0x11
+
+lhi r1, 0x15
+adi r1, r1, 0x12
+
+add r2, r1, r0
+add r3, r2, r7
+jal r1, #call
+db 0xffff
+db 0xffff
+adi r6,r6,0x1

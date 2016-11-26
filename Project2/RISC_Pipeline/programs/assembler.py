@@ -184,7 +184,7 @@ def main():
             line = line.split(';')[0]
             if line:
                 tokens = re.split(' |,',line);
-                tokens = [t for t in tokens if t]
+                tokens = [t.strip() for t in tokens if t]
 
                 # check for Label assignment
                 if len(tokens) == 1 and tokens[0][-1] == ':':
@@ -194,6 +194,7 @@ def main():
                 for i in range(1,len(tokens)):
                     t = tokens[i]
                     if t[0] == '#' and t[1:] in labels:
+			print(labels[t[1:]])
                         tokens[i] = str(labels[t[1:]]-curr_addr)
 
                 # get the type of instruction

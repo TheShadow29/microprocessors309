@@ -1,0 +1,9 @@
+lhi r0, 0x1
+lhi r3,0x3
+adi r4,r3,0x1
+adi r5, r0, 0x3e
+sm r5, 0b00011000
+;sw r3,r0,0x1
+;sw r4,r0,0x2
+;adi r0, r0, 0x1
+lm r0,0b00000110
