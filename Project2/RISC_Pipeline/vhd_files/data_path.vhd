@@ -143,11 +143,11 @@ begin
 	
 ------------------ FETCH STAGE ----------------------
 
-pc_fetch: DataRegister port map (Din=>pc_fetch_in, Dout=>pc_fetch_out, clk=>clk, enable=>pc_fetch_enable);
+pc_fetch: DataRegister port map (Din=>pc_fetch_in, Dout=>pc_fetch_out, clk=>clk,reset=>reset,enable=>pc_fetch_enable);
 pc_incr_fetch: Incrementer port map (x=>pc_fetch_out, z=>pc_fetch_p1);
 program_rom1: program_rom port map
 	(
-		address => pc_fetch_out(13 downto 0),
+		address => pc_fetch_out(9 downto 0),
 		q => rom_data,
 		clock => clk
 	);
@@ -202,6 +202,7 @@ FD_pipeline: PipelineDataRegister port map
 		Din => FD_pipeline_in,
 		Dout => FD_pipeline_out,
 		clk => clk,
+		reset=>reset,
 		enable => FD_pipeline_en
 	);
 
@@ -289,7 +290,8 @@ DRR_pipeline: PipelineDataRegister port map
 		Din => DRR_pipeline_in(35 downto 0),
 		Dout => DRR_pipeline_out(35 downto 0),
 		enable => DRR_pipeline_en,
-		clk => clk
+		clk => clk,
+		reset=>reset
 	);
 
 DRR_pipeline_pe: DataRegister port map
@@ -297,7 +299,8 @@ DRR_pipeline_pe: DataRegister port map
 		Din => DRR_pipeline_in(43 downto 36),
 		Dout => DRR_pipeline_out(43 downto 36),
 		enable => DRR_pipeline_pe_en,
-		clk => clk
+		clk => clk,
+		reset=>reset
 	);
 
 DRR_pipeline2: DataRegister port map
@@ -305,7 +308,8 @@ DRR_pipeline2: DataRegister port map
 		Din => DRR_pipeline_in(75 downto 44),
 		Dout => DRR_pipeline_out(75 downto 44),
 		enable => DRR_pipeline_en,
-		clk => clk
+		clk => clk,
+		reset=>reset
 	);
 		
 	
@@ -398,7 +402,8 @@ RRE_pipeline : PipelineDataRegister port map
 		Din => RRE_pipeline_in,
 		Dout => RRE_pipeline_out,
 		enable => RRE_pipeline_en,					---------NOT SURE-----------if always '1'---------
-		clk => clk
+		clk => clk,
+		reset=>reset
 	);
 
 -- NOP --
@@ -578,7 +583,8 @@ EM_pipeline : PipelineDataRegister port map
 		Din => EM_pipeline_in,
 		Dout => EM_pipeline_out,
 		enable => '1',---------NOT SURE-----------if always '1'---------
-		clk => clk
+		clk => clk,
+		reset=>reset
 	);
 	
 -- NOP --
@@ -625,7 +631,7 @@ ad_memory <= EM_pipeline_out(43 downto 28);
 
 data_ram1: data_ram port map
 	(
-		address => ad_memory(13 downto 0),
+		address => ad_memory(9 downto 0),
 		data => EM_pipeline_out(24 downto 9),
 		wren => mw_memory,			--------------------NOT SURE -----------need not always read if not writing?--------
 		q => ram_dout,
@@ -640,7 +646,8 @@ MWB_pipeline: PipelineDataRegister port map
 		Din => MWB_pipeline_in,
 		Dout => MWB_pipeline_out,
 		enable => '1',---------NOT SURE-----------if always '1'---------
-		clk => clk
+		clk => clk,
+		reset=>reset
 	);
 	
 c_memory <= EM_pipeline_out(44);
@@ -689,14 +696,16 @@ creg: DataRegister port map (
 			Din => MWB_pipeline_out(23 downto 23),
 			Dout => ctmp_writeback,
 			enable => cen_writeback,
-			clk => clk
+			clk => clk,
+			reset=>reset
 		);
 
 zreg: DataRegister port map (
 			Din => MWB_pipeline_out(24 downto 24),
 			Dout => ztmp_writeback,
 			enable => zen_writeback,
-			clk => clk
+			clk => clk,
+			reset=>reset
 		);
 		
 pc_writeback <= MWB_pipeline_out(40 downto 25);

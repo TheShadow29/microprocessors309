@@ -6,14 +6,14 @@ package all_components is
 		--n bit register
 		port (Din: in std_logic_vector;
 				Dout: out std_logic_vector;
-				clk, enable: in std_logic);
+				clk, enable, reset: in std_logic);
 	end component;
 	
 	component PipelineDataRegister is
 		--n bit register
 		port (Din: in std_logic_vector;
 				Dout: out std_logic_vector;
-				clk, enable: in std_logic);
+				clk, enable, reset: in std_logic);
 	end component;
 	
 	component Incrementer is
@@ -34,7 +34,7 @@ package all_components is
 	component program_rom is
 		PORT
 		(
-			address		: IN STD_LOGIC_VECTOR (13 DOWNTO 0);
+			address		: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
 			clock		: IN STD_LOGIC  := '1';
 			q		: OUT STD_LOGIC_VECTOR (15 DOWNTO 0)
 		);
@@ -43,7 +43,7 @@ package all_components is
 	component data_ram IS
 		PORT
 		(
-			address		: IN STD_LOGIC_VECTOR (13 DOWNTO 0);
+			address		: IN STD_LOGIC_VECTOR (9 DOWNTO 0);
 			clock		: IN STD_LOGIC  := '1';
 			data		: IN STD_LOGIC_VECTOR (15 DOWNTO 0);
 			wren		: IN STD_LOGIC ;

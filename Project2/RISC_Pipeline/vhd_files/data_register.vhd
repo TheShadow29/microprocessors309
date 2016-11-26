@@ -8,23 +8,27 @@ entity DataRegister is
 	--n bit register
 	port (Din: in std_logic_vector;
 			Dout: out std_logic_vector;
-			clk, enable: in std_logic);
+			clk, enable, reset: in std_logic);
 end entity;
 
 architecture NBits of DataRegister is
 signal prevDin: std_logic_vector(Din'range) := (others=>'0');
 begin
 
-	process(clk)
+	process(clk, reset)
 		variable dout_var : std_logic_vector(Din'range);
 	begin
 		dout_var := prevDin;
-		if(clk'event and (clk = '0')) then
-			if enable = '1' then
-				--prevDin <= Din;
-				dout_var := Din;
+		if(reset = '0') then
+			if(clk'event and (clk = '0')) then
+				if enable = '1' then
+					--prevDin <= Din;
+					dout_var := Din;
+				end if;
+				prevDin <= dout_var;
 			end if;
-			prevDin <= dout_var;
+		else
+			prevDin <= (others => '0');
 		end if;
 	end process;
 	Dout<=prevDin;
@@ -40,7 +44,7 @@ entity PipelineDataRegister is
 	--n bit register
 	port (Din: in std_logic_vector;
 			Dout: out std_logic_vector;
-			clk, enable: in std_logic);
+			clk, enable, reset: in std_logic);
 end entity;
 
 architecture NBits of PipelineDataRegister is
@@ -50,12 +54,16 @@ begin
 		variable dout_var : std_logic_vector(Din'range);
 	begin
 		dout_var := prevDin;
-		if(clk'event and (clk = '0')) then
-			if enable = '1' then
-				--prevDin <= Din;
-				dout_var := Din;
+		if(reset = '0') then
+			if(clk'event and (clk = '0')) then
+				if enable = '1' then
+					--prevDin <= Din;
+					dout_var := Din;
+				end if;
+				prevDin <= dout_var;
 			end if;
-			prevDin <= dout_var;
+		else
+			prevDin <= (0=>'1', others => '0');
 		end if;
 	end process;
 	Dout<=prevDin;

@@ -8,7 +8,7 @@ entity RegFile is
 		D1,D2: out std_logic_vector(15 downto 0);
 		A1,A2,A3 :in std_logic_vector(2 downto 0);
 		D3, PC:in std_logic_vector(15 downto 0);
-		clk, WR, R7upd: in std_logic
+		clk, reset, WR, R7upd: in std_logic
 	 );
 end entity RegFile;
 
@@ -27,11 +27,11 @@ WriteData <= D3;
 
 RegFile:
 for I in 0 to 6 generate
-	RegFileX: DataRegister port map (Dout=>R(I),Enable=>En(I),Din=>WriteData,clk=>clk);
+	RegFileX: DataRegister port map (Dout=>R(I),Enable=>En(I),Din=>WriteData,clk=>clk, reset=>reset);
 end generate RegFile;
 
 PCen <= R7upd or En(7);
-PC_register: DataRegister port map (Dout=>R(7),Enable=>PCen,Din=>WriteDataPC,clk=>clk);
+PC_register: DataRegister port map (Dout=>R(7),Enable=>PCen,Din=>WriteDataPC,clk=>clk, reset=>reset);
 
 D1Mux: mux8 port map (A0=>R(0),
 							 A1=>R(1),
