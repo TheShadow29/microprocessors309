@@ -233,14 +233,15 @@ package all_components is
 	end component;
 	
 	component history_block is
-		port (
-				pc_br, pc_br_next : in std_logic_vector(15 downto 0);
-				hin : in std_logic;
-				pc_in : in std_logic_vector(15 downto 0);
-				stall_hist : out std_logic;
-				br_en : out std_logic;
-				pc_out : out std_logic_vector(15 downto 0)
-			);
+		port
+		(
+			pc_br, pc_br_next : in std_logic_vector(15 downto 0);
+			hin, clk, BEQ: in std_logic;
+			pc_in : in std_logic_vector(15 downto 0);
+			stall_hist : out std_logic := '0';
+			br_en : out std_logic := '0';
+			pc_out : out std_logic_vector(15 downto 0) := (others => '0')
+		);
 	end component;
 
 	component RISC_Pipeline is

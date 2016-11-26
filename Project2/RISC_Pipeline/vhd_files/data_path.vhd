@@ -157,7 +157,8 @@ beq_history: history_block port map
 		pc_br => pc_exec,
 		pc_br_next => pc_exec_p1,
 		hin => stall_beq,
-		
+		clk => clk,
+		BEQ => beq_exec,
 		pc_in => pc_fetch_out,
 		br_en => history_bren,
 		pc_out => history_pcout,
