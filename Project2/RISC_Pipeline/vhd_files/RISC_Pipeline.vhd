@@ -14,11 +14,18 @@ entity RISC_Pipeline is
 end entity;
 
 architecture pipe of RISC_Pipeline is
-
+	signal clk_slow : std_logic;
 begin
+	process(clk)
+	begin
+		if(clk'event and clk = '0') then 
+			clk_slow <= not(clk_slow);
+		end if;
+	end process;
+
 	dp : data_path port map
 			(
-				clk => clk,
+				clk => clk_slow,
 				reset => reset,
 				start => start,
 				done => done

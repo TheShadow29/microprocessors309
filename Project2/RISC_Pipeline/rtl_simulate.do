@@ -24,6 +24,7 @@ vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/muxes.vhd}
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/decoder.vhd}
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/data_path.vhd}
+vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/history_block_parallel.vhd}
 
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/testbenches/test_pipeline.vhd}
 

@@ -2,6 +2,18 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 package all_components is
+	component unary_OR IS
+		 generic (N: positive := 8); --array size
+		 port (
+			  inp: in std_logic_vector(N-1 downto 0);
+			  outp: out std_logic);
+	end component;
+	component unary_AND IS
+		 generic (N: positive := 8); --array size
+		 port (
+			  inp: in std_logic_vector(N-1 downto 0);
+			  outp: out std_logic);
+	end component;
 	component DataRegister is
 		--n bit register
 		port (Din: in std_logic_vector;
@@ -79,7 +91,7 @@ package all_components is
 			D1,D2: out std_logic_vector(15 downto 0);
 			A1,A2,A3 :in std_logic_vector(2 downto 0);
 			D3, PC:in std_logic_vector(15 downto 0);
-			clk, WR, R7upd: in std_logic
+			clk, reset, WR, R7upd: in std_logic
 		 );
 	end component RegFile;
 	
@@ -238,6 +250,34 @@ package all_components is
 			pc_br, pc_br_next : in std_logic_vector(15 downto 0);
 			hin, clk, BEQ: in std_logic;
 			pc_in : in std_logic_vector(15 downto 0);
+			stall_hist : out std_logic := '0';
+			br_en : out std_logic := '0';
+			pc_out : out std_logic_vector(15 downto 0) := (others => '0')
+		);
+	end component;
+	
+	component history_block_single is
+		port
+			(
+				pc_br: in std_logic_vector(15 downto 0);
+				br_d, clk, reset, wen, BEQ: in std_logic;
+				pc_in : in std_logic_vector(15 downto 0);
+				write_data : in std_logic_vector(33 downto 0);			
+				occ, mru, match: out std_logic;
+				
+				stall_hist : out std_logic := '0';
+				br_en : out std_logic := '0';
+				pc_out : out std_logic_vector(15 downto 0) := (others => '0')
+			);
+	end component;
+	
+	component history_block_parallel is
+		generic ( size : integer );
+		port (
+			pc_br, pc_br_next: in std_logic_vector(15 downto 0);
+			br_d, clk, reset, BEQ: in std_logic;
+			pc_in : in std_logic_vector(15 downto 0);
+			
 			stall_hist : out std_logic := '0';
 			br_en : out std_logic := '0';
 			pc_out : out std_logic_vector(15 downto 0) := (others => '0')

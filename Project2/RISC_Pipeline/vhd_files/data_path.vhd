@@ -151,13 +151,29 @@ program_rom1: program_rom port map
 		q => rom_data,
 		clock => clk
 	);
-	
-beq_history: history_block port map
+--	
+--beq_history:  port map
+--	(
+--		pc_br => pc_exec,
+--		pc_br_next => pc_exec_p1,
+--		hin => stall_beq,
+--		clk => clk,
+--		BEQ => beq_exec,
+--		pc_in => pc_fetch_out,
+--		br_en => history_bren,
+--		pc_out => history_pcout,
+--		stall_hist => history_stall
+--	);
+
+
+history_parallel: history_block_parallel generic map (size => 8) 
+	port map
 	(
 		pc_br => pc_exec,
 		pc_br_next => pc_exec_p1,
-		hin => stall_beq,
+		br_d => stall_beq,
 		clk => clk,
+		reset => reset,
 		BEQ => beq_exec,
 		pc_in => pc_fetch_out,
 		br_en => history_bren,
@@ -346,7 +362,8 @@ register_file: regfile port map
 		R7upd => pcupd_r7upd,
 		PC => pc_writeback,
 		
-		clk => clk
+		clk => clk,
+		reset => reset
 	);
 	
 lmsm_pe: PriorityEncoder port map
