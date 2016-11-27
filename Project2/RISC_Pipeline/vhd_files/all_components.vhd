@@ -283,6 +283,16 @@ package all_components is
 			pc_out : out std_logic_vector(15 downto 0) := (others => '0')
 		);
 	end component;
+	component history_block_fraud is 
+	port
+	(
+		stall_beq, BEQ : in std_logic;
+--		pc_br : in std_logic_vector(15 downto 0);
+		pc_br_next : in std_logic_vector(15 downto 0);
+		pc_out : out std_logic_vector(15 downto 0);
+		br_en, stall_hist : out std_logic
+	);
+	end component;
 
 	component RISC_Pipeline is
 		port
