@@ -289,6 +289,11 @@ history bit mismatched.
 Internally, the \textbf{History Block} stores a history table with 
 \textbf{PC\_curr},\textbf{PC\_next} and \textbf{H\_curr}.
 
+We have used the same block for the implementation of \textbf{JAL} instruction since\\
+this also deals with the static branch. The only difference is that we give the branch\\
+decision as 1 always, since whenever \textbf{JAL} instruction appears we need to branch only.\\
+This therefore saves one stall cycle for \textbf{JAL}.
+
 Logic for \textbf{BRen},\textbf{PCout} and \textbf{StallHistory}:
     \begin{lstlisting}
         for(PC_curr,PC_next,H_curr in HistoryTable){
