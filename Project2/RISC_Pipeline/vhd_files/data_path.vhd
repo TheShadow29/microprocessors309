@@ -30,10 +30,10 @@ architecture data of data_path is
 		
 		---- FETCH STAGE SIGNALS ----
 		signal pc_fetch_in, pc_fetch_out,
-		       pc_fetch_p1, history_pcout : std_logic_vector(15 downto 0) := (others=>'0');
+		       pc_fetch_p1, history_pcout, history_pcout_beq, history_pcout_jal : std_logic_vector(15 downto 0) := (others=>'0');
 		signal rom_data : std_logic_vector(15 downto 0) := (others => '1');
-		signal pc_fetch_enable, FD_pipeline_en, history_bren,
-		       history_stall: std_logic := '0';
+		signal pc_fetch_enable, FD_pipeline_en, history_bren, history_bren_beq, history_bren_jal,
+		       history_stall_beq, history_stall_jal: std_logic := '0';
       constant const_ir_nop: std_logic_vector(15 downto 0) := (others => '1');
 		
 		-- 0 -> NOP
@@ -45,7 +45,7 @@ architecture data of data_path is
 		signal opcode_irdecoder: std_logic_vector(3 downto 0) := (others=>'0');
 		signal ccode_irdecoder: std_logic_vector(1 downto 0) := (others=>'0');
 		signal ra_irdecoder, rb_irdecoder, rc_irdecoder: std_logic_vector(2 downto 0) := (others=>'0');
-		signal ninebithigh_irdecoder, imm_irdecoder, pc_decode_p1: std_logic_vector(15 downto 0) := (others=>'0');
+		signal ninebithigh_irdecoder, imm_irdecoder, pc_decode, pc_decode_p1: std_logic_vector(15 downto 0) := (others=>'0');
 		signal lmsm_imm_irdecoder: std_logic_vector(7 downto 0) := (others=>'0');
 		signal lhi_irdecoder, lmsm_irdecoder, jal_irdecoder,
 				 DRR_pipeline_en, DRR_pipeline_pe_en: std_logic := '0';
@@ -165,7 +165,7 @@ program_rom1: program_rom port map
 --		stall_hist => history_stall
 --	);
 
-history_parallel: history_block_parallel generic map (size => 2) 
+history_parallel_beq: history_block_parallel generic map (size => 8) 
 	port map
 	(
 		pc_br => pc_exec,
@@ -175,10 +175,30 @@ history_parallel: history_block_parallel generic map (size => 2)
 		reset => reset,
 		BEQ => beq_exec,
 		pc_in => pc_fetch_out,
-		br_en => history_bren,
-		pc_out => history_pcout,
-		stall_hist => history_stall
+		br_en => history_bren_beq,
+		pc_out => history_pcout_beq,
+		stall_hist => history_stall_beq
 	);
+	
+history_parallel_jal: history_block_parallel generic map (size => 8) 
+	port map
+	(
+		pc_br => pc_decode,
+		pc_br_next => pc_decode_p1,
+		br_d => '1',
+		clk => clk,
+		reset => reset,
+		BEQ => jal_irdecoder,
+		pc_in => pc_fetch_out,
+		br_en => history_bren_jal,
+		pc_out => history_pcout_jal,
+		stall_hist => history_stall_jal
+	);
+
+history_pcout <= history_pcout_beq when history_bren_beq = '1' else 
+					  history_pcout_jal when history_bren_jal = '1' else
+					  (others => '0');
+history_bren <= history_bren_beq or history_bren_jal;
 --history_parallel: history_block_parallel generic map (size => 8) 
 --	port map
 --	(
@@ -209,9 +229,9 @@ history_parallel: history_block_parallel generic map (size => 2)
 --history_stall <= '0';
 pc_fetch_in <= history_pcout when history_bren = '1' else 
                d_writeback when pc_r7_upd_wen_out = '1' else 
-					pc_exec_next when history_stall = '1' else
+					pc_exec_next when history_stall_beq = '1' else
 					d1_regread_jlr when jlr_regread = '1' else
-					pc_decode_p1 when jal_irdecoder = '1' else
+					pc_decode_p1 when history_stall_jal = '1' else
 					pc_fetch_p1;
 					
 pc_fetch_enable <= not(stall_lw or lmsm_regread or freeze_jlr);
@@ -220,19 +240,17 @@ FD_pipeline_en <= not(V_regread or stall_lw or freeze_jlr);
 
 -- IR register --
 FD_pipeline_in(16 downto 1) <= const_ir_nop when
-											history_stall = '1' or
 											pc_r7_upd_stall = '1' or
 											jlr_regread = '1' or
-											history_stall = '1' or
-											jal_irdecoder = '1' 
+											history_stall_beq = '1' or
+											history_stall_jal = '1' 
 										 else rom_data;
 -- FD nop --									 
 FD_pipeline_in(0) <= '1' when 
-								history_stall = '1' or
 								pc_r7_upd_stall = '1' or
 								jlr_regread = '1' or
-								history_stall = '1' or
-								jal_irdecoder = '1'
+								history_stall_beq = '1' or
+								history_stall_jal = '1'
 							 else '0';
 							 
 -- FD PC register --
@@ -298,9 +316,10 @@ cd : control_decoder port map
 		zen => DRR_pipeline_in(3)
 	);
 	
+pc_decode <= FD_pipeline_out(32 downto 17);
 pc_adder_decode: Adder port map
 	(
-		X => FD_pipeline_out(32 downto 17),
+		X => pc_decode,
 		Y => imm_irdecoder,
 		-- cout => NULL,
 		Z => pc_decode_p1
@@ -317,13 +336,12 @@ DRR_pipeline_in(43 downto 36) <= Txn_regread when (lmsm_regread = '1' and V_regr
 DRR_pipeline_in(59 downto 44) <= ninebithigh_irdecoder when lhi_irdecoder = '1' else
 											imm_irdecoder;
 -- PC --
-DRR_pipeline_in(75 downto 60) <= FD_pipeline_out(32 downto 17);
+DRR_pipeline_in(75 downto 60) <= pc_decode;
 
 -- NOP --
 DRR_pipeline_in(0) <= pc_r7_upd_stall or
                       jlr_regread or
-							 history_stall or
-							 history_stall or
+							 history_stall_beq or
 							 FD_pipeline_out(0);
 							 
 DRR_pipeline: PipelineDataRegister port map
@@ -451,7 +469,7 @@ RRE_pipeline : PipelineDataRegister port map
 -- NOP --
 RRE_pipeline_in(0) <= DRR_pipeline_out(0) or
 							 pc_r7_upd_stall or
-							 history_stall or
+							 history_stall_beq or
 							 freeze_jlr;
 							 
 -- 3 downto 1 -> WB control

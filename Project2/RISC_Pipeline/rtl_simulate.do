@@ -40,11 +40,16 @@ sim:/test_pipeline/dut/dp/pc_fetch_in \
 sim:/test_pipeline/dut/dp/pc_fetch_out \
 sim:/test_pipeline/dut/dp/pc_fetch_p1 \
 sim:/test_pipeline/dut/dp/history_pcout \
+sim:/test_pipeline/dut/dp/history_pcout_beq \
+sim:/test_pipeline/dut/dp/history_pcout_jal \
 sim:/test_pipeline/dut/dp/rom_data \
 sim:/test_pipeline/dut/dp/pc_fetch_enable \
 sim:/test_pipeline/dut/dp/FD_pipeline_en \
 sim:/test_pipeline/dut/dp/history_bren \
-sim:/test_pipeline/dut/dp/history_stall \
+sim:/test_pipeline/dut/dp/history_bren_jal \
+sim:/test_pipeline/dut/dp/history_bren_beq \
+sim:/test_pipeline/dut/dp/history_stall_beq \
+sim:/test_pipeline/dut/dp/history_stall_jal \
 sim:/test_pipeline/dut/dp/const_ir_nop \
 sim:/test_pipeline/dut/dp/FD_pipeline_in \
 sim:/test_pipeline/dut/dp/FD_pipeline_out \
@@ -56,6 +61,7 @@ sim:/test_pipeline/dut/dp/rc_irdecoder \
 sim:/test_pipeline/dut/dp/ninebithigh_irdecoder \
 sim:/test_pipeline/dut/dp/imm_irdecoder \
 sim:/test_pipeline/dut/dp/pc_decode_p1 \
+sim:/test_pipeline/dut/dp/pc_decode \
 sim:/test_pipeline/dut/dp/lmsm_imm_irdecoder \
 sim:/test_pipeline/dut/dp/lhi_irdecoder \
 sim:/test_pipeline/dut/dp/lmsm_irdecoder \
