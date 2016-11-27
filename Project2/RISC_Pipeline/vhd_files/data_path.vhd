@@ -165,7 +165,6 @@ program_rom1: program_rom port map
 --		stall_hist => history_stall
 --	);
 
-
 history_parallel: history_block_parallel generic map (size => 2) 
 	port map
 	(
@@ -180,6 +179,31 @@ history_parallel: history_block_parallel generic map (size => 2)
 		pc_out => history_pcout,
 		stall_hist => history_stall
 	);
+--history_parallel: history_block_parallel generic map (size => 8) 
+--	port map
+--	(
+--		pc_br => pc_exec,
+--		pc_br_next => pc_exec_p1,
+--		br_d => stall_beq,
+--		clk => clk,
+--		reset => reset,
+--		BEQ => beq_exec,
+--		pc_in => pc_fetch_out,
+--		br_en => history_bren,
+--		pc_out => history_pcout,
+--		stall_hist => history_stall
+--	);
+
+-- history_fraud : history_block_fraud
+--		port map 
+--		(
+--			stall_beq => stall_beq,
+--			BEQ => beq_exec,
+--			pc_br_next => pc_exec_p1,
+--			pc_out => history_pcout,
+--			br_en => history_bren,
+--			stall_hist => history_stall
+--		);
 --history_bren <= '0';
 --history_pcout <= (others => '0');
 --history_stall <= '0';
