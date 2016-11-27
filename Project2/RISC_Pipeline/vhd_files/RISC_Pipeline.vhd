@@ -14,7 +14,7 @@ entity RISC_Pipeline is
 end entity;
 
 architecture pipe of RISC_Pipeline is
-	signal clk_slow : std_logic;
+	signal clk_slow : std_logic := '0';
 begin
 	process(clk)
 	begin
