@@ -10,7 +10,6 @@ vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/flag_forwarding.vhd}
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/program_rom.vhd}
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/data_ram.vhd}
-vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/history_block.vhd}
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/pc_r7_update_block.vhd}
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/instruction_decoder.vhd}
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/RISC_Pipeline.vhd}
@@ -25,6 +24,7 @@ vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/decoder.vhd}
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/data_path.vhd}
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/history_block_parallel.vhd}
+vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/vhd_files/unary.vhd}
 
 vcom -93 -work work {/media/udiboy/Data/Documents/IIT/EE/EE 337/projects/Project2/RISC_Pipeline/testbenches/test_pipeline.vhd}
 

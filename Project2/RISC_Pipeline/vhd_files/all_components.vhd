@@ -262,10 +262,10 @@ package all_components is
 				pc_br: in std_logic_vector(15 downto 0);
 				br_d, clk, reset, wen, BEQ: in std_logic;
 				pc_in : in std_logic_vector(15 downto 0);
-				write_data : in std_logic_vector(33 downto 0);			
-				occ, mru, match: out std_logic;
+				write_data : in std_logic_vector(32 downto 0);			
+				occ, mru, br_match, in_match: out std_logic := '0';
 				
-				stall_hist : out std_logic := '0';
+				h_mismatch : out std_logic := '0';
 				br_en : out std_logic := '0';
 				pc_out : out std_logic_vector(15 downto 0) := (others => '0')
 			);

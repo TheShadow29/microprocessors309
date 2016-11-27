@@ -166,7 +166,7 @@ program_rom1: program_rom port map
 --	);
 
 
-history_parallel: history_block_parallel generic map (size => 8) 
+history_parallel: history_block_parallel generic map (size => 2) 
 	port map
 	(
 		pc_br => pc_exec,
