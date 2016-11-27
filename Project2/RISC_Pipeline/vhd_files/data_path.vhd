@@ -99,7 +99,7 @@ architecture data of data_path is
 		
 		signal alu1_exec, alu2_exec, dmem_exec,
 		       alu_in1, alu_in2, alu_out,
-				 pc_exec, pc_exec_p1: std_logic_vector(15 downto 0) := (others=>'0');
+				 pc_exec, pc_exec_p1, pc_exec_next, pc_exec_pimm: std_logic_vector(15 downto 0) := (others=>'0');
 				 
 		-- 0 -> NOP
 		-- 8 downto 1 -> M/WB controls
@@ -155,7 +155,7 @@ program_rom1: program_rom port map
 --beq_history:  port map
 --	(
 --		pc_br => pc_exec,
---		pc_br_next => pc_exec_p1,
+--		pc_br_next => pc_exec_pimm,
 --		hin => stall_beq,
 --		clk => clk,
 --		BEQ => beq_exec,
@@ -169,7 +169,7 @@ history_parallel: history_block_parallel generic map (size => 2)
 	port map
 	(
 		pc_br => pc_exec,
-		pc_br_next => pc_exec_p1,
+		pc_br_next => pc_exec_pimm,
 		br_d => stall_beq,
 		clk => clk,
 		reset => reset,
@@ -183,7 +183,7 @@ history_parallel: history_block_parallel generic map (size => 2)
 --	port map
 --	(
 --		pc_br => pc_exec,
---		pc_br_next => pc_exec_p1,
+--		pc_br_next => pc_exec_pimm,
 --		br_d => stall_beq,
 --		clk => clk,
 --		reset => reset,
@@ -199,7 +199,7 @@ history_parallel: history_block_parallel generic map (size => 2)
 --		(
 --			stall_beq => stall_beq,
 --			BEQ => beq_exec,
---			pc_br_next => pc_exec_p1,
+--			pc_br_next => pc_exec_pimm,
 --			pc_out => history_pcout,
 --			br_en => history_bren,
 --			stall_hist => history_stall
@@ -209,7 +209,7 @@ history_parallel: history_block_parallel generic map (size => 2)
 --history_stall <= '0';
 pc_fetch_in <= history_pcout when history_bren = '1' else 
                d_writeback when pc_r7_upd_wen_out = '1' else 
-					pc_exec_p1 when history_stall = '1' else
+					pc_exec_next when history_stall = '1' else
 					d1_regread_jlr when jlr_regread = '1' else
 					pc_decode_p1 when jal_irdecoder = '1' else
 					pc_fetch_p1;
@@ -612,14 +612,19 @@ nop_exec <= RRE_pipeline_out(0) or nop_flagfwd or stall_lw;
 
 pc_exec <= RRE_pipeline_out(110 downto 95);
 --PC + Imm	
-pc_adder_exec: Adder port map
+pc_imm_adder_exec: Adder port map
 	(
 		X => pc_exec,
 		Y => RRE_pipeline_out(94 downto 79),
 		-- cout => NULL,
+		Z => pc_exec_pimm
+	);
+pc_incr_exec: Incrementer port map
+	(
+		X => pc_exec,
 		Z => pc_exec_p1
 	);
-	
+pc_exec_next <= pc_exec_pimm when stall_beq ='1' else pc_exec_p1;
 EM_pipeline : PipelineDataRegister port map 
 	(
 		Din => EM_pipeline_in,
