@@ -234,9 +234,9 @@ pc_fetch_in <= history_pcout when history_bren = '1' else
 					pc_decode_p1 when history_stall_jal = '1' else
 					pc_fetch_p1;
 					
-pc_fetch_enable <= not(stall_lw or lmsm_regread or freeze_jlr);
+pc_fetch_enable <= not(stall_lw or (V_regread and lmsm_regread) or freeze_jlr);
 
-FD_pipeline_en <= not(V_regread or stall_lw or freeze_jlr);
+FD_pipeline_en <= not((V_regread and lmsm_regread) or stall_lw or freeze_jlr);
 
 -- IR register --
 FD_pipeline_in(16 downto 1) <= const_ir_nop when
@@ -372,7 +372,7 @@ DRR_pipeline2: DataRegister port map
 	);
 		
 	
-DRR_pipeline_en <= not(V_regread or stall_lw or freeze_jlr);
+DRR_pipeline_en <= not((V_regread and lmsm_regread) or stall_lw or freeze_jlr);
 DRR_pipeline_pe_en <= not(stall_lw or freeze_jlr);
 
 ------------------ REGREAD STAGE ----------------------

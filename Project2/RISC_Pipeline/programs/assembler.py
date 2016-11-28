@@ -144,7 +144,7 @@ instr_rst = create_instr_type("instr_rst","",(),"{:s}1111111111111111",None)
 
 # Execution starts
 
-mif_header = '''DEPTH = 16384;                -- The size of memory in words
+mif_header = '''DEPTH = 1024;                -- The size of memory in words
 WIDTH = 16;                   -- The size of data in bits
 ADDRESS_RADIX = BIN;          -- The radix for address values
 DATA_RADIX = BIN;             -- The radix for data values
@@ -220,13 +220,14 @@ def main():
                     testcases.append({'addr':instr.args[0].data,
                                       'byte':instr.args[1].data})
                 else:
-                    program.append({'addr':curr_addr,'byte':instr.get_byte()})
+                    program.append({'addr':curr_addr,'byte':instr.get_byte(),'inst':line})
                     curr_addr += 1
 
     if not errored:
         print(mif_header, file=output_file)
         for p in program:
-            print('{:015b} : {:016b};'.format(p['addr'],p['byte']), file=output_file)
+            print('{:010b} : {:016b}; -- {:s}'.format(p['addr'],p['byte'],p['inst']), \
+                  file=output_file)
         print('END;',file=output_file)
         print("Successfully assembled")
 
