@@ -1,16 +1,17 @@
 org 0x50
 fib:
-    add r4,r2,r3
-    adi r2,r3,0x0
-    adi r3,r4,0x0
+    add r3,r2,r3
+    ndu r2,r2,r2
+    adi r2,r2,0x1
+    add r2,r2,r3
     jlr r6,r6
-    sm r1,0b00000110
 
 org 0x00
 ; Read number from 0x0100
 lhi r1,0x2
 lw r0,r1,0x0
-adi r1,r1,0x1
+lw r4,r1,0x1
+adi r1,r1,0x2
 
 adi r2,r2,0x1
 adi r3,r3,0x1
@@ -23,14 +24,19 @@ loop_back:
     adi r1,r1,0x1
     sw r3,r1,0x0
 
+    ndu r6,r4,r4
+    adi r6,r6,0x1
+    add r6,r3,r6
+    adc r6,r6,r4
+    adz r6,r6,r4
+    beq r3,r6,0x4
+
     adi r5,r5,0x1
     beq r0,r5,0x2
     jal r6,#loop_back
 
 end:
     sm r1,0xff
-    adi r6,r6,0x1
-    adi r6,r6,0x1
     adi r7,r7,0x0
 
 
