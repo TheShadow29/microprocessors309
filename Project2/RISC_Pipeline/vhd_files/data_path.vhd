@@ -90,14 +90,14 @@ architecture data of data_path is
 		signal lhi_exec, pc1_exec, immc_exec,
 		       beq_exec, zflagc_exec, cflagc_exec,
 				 stall_beq, stall_lw,
-				 alu1_exec_stall, alu2_exec_stall, dmem_exec_stall,
+				 alu1_exec_stall, alu2_exec_stall,
 				 alu_c, alu_z, nop_flagfwd,
 				 flagfwd_stall, nop_exec, wen_exec, LW_exec: std_logic := '0';
 		signal aluc_exec, flagc_exec: std_logic_vector(1 downto 0) := (others => '0');
 		signal rd_exec: std_logic_vector(2 downto 0) := (others => '0');
 		signal exec_control_in : std_logic_vector(11 downto 0) := (others => '0');
 		
-		signal alu1_exec, alu2_exec, dmem_exec,
+		signal alu1_exec, alu2_exec,
 		       alu_in1, alu_in2, alu_out,
 				 pc_exec, pc_exec_p1, pc_exec_next, pc_exec_pimm: std_logic_vector(15 downto 0) := (others=>'0');
 				 
@@ -109,13 +109,13 @@ architecture data of data_path is
 		-- 44 -> Cmem 
 		-- 45 -> Zmem 
       -- 61 downto 46 -> PC		
-		signal EM_pipeline_in, EM_pipeline_out: std_logic_vector(61 downto 0) := (0 => '1', others=>'0');
+		signal EM_pipeline_in, EM_pipeline_out: std_logic_vector(64 downto 0) := (0 => '1', others=>'0');
 		
 		---- MEMORY STAGE SIGNALS ----
 		signal mw_memory, mr_memory, lw_memory,
 		       outc_memory, zc_memory,
 				 c_memory, z_memory, ram_z, wen_memory : std_logic := '0';
-		signal ram_dout, ad_memory: std_logic_vector(15 downto 0) := (others=>'0');
+		signal ram_dout, ad_memory, dmem_memory: std_logic_vector(15 downto 0) := (others=>'0');
 		signal rd_memory: std_logic_vector(2 downto 0) := (others=>'0');
 		signal memory_control_in : std_logic_vector(5 downto 0) := (others => '0');
 		
@@ -227,11 +227,11 @@ history_bren <= history_bren_beq or history_bren_jal;
 --history_bren <= '0';
 --history_pcout <= (others => '0');
 --history_stall <= '0';
-pc_fetch_in <= history_pcout when history_bren = '1' else 
-               d_writeback when pc_r7_upd_wen_out = '1' else 
+pc_fetch_in <= d_writeback when pc_r7_upd_wen_out = '1' else 
 					pc_exec_next when history_stall_beq = '1' else
 					d1_regread_jlr when jlr_regread = '1' else
 					pc_decode_p1 when history_stall_jal = '1' else
+					history_pcout when history_bren = '1' else 
 					pc_fetch_p1;
 					
 pc_fetch_enable <= not(stall_lw or (V_regread and lmsm_regread) or freeze_jlr);
@@ -569,28 +569,8 @@ alu2_forward : ForwardingUnit port map
 		Stall => alu2_exec_stall
 	);
 	
-dmem_forward : ForwardingUnit port map
-	(
-		Rsrc => RRE_pipeline_out(21 downto 19),
-		Rmem => rd_memory,
-		Rwb => rd_writeback,
-		
-		NOPmem => EM_pipeline_out(0),
-		NOPwb => MWB_pipeline_out(0),
-		LW => lw_memory,
-		Wen_mem => wen_memory,
-		Wen_wb => wen_writeback,
-			
-		Idef => RRE_pipeline_out(37 downto 22),
-		Imem => ad_memory,
-		Iwb => d_writeback,
-		Ipc => RRE_pipeline_out(110 downto 95),
-		
-		Fout => dmem_exec,
-		Stall => dmem_exec_stall
-	);
-	
-stall_lw <= dmem_exec_stall or alu1_exec_stall or alu2_exec_stall or flagfwd_stall;
+-- ALU2_stall and not(IMM)
+stall_lw <= alu1_exec_stall or (alu2_exec_stall and not(RRE_pipeline_out(16))) or flagfwd_stall;
 
 alu_exec: alu port map
 	(
@@ -660,7 +640,7 @@ EM_pipeline_in(0) <= nop_exec or
 EM_pipeline_in(8 downto 1) <= RRE_pipeline_out(8 downto 1);
 
 -- Dmem --
-EM_pipeline_in(24 downto 9) <= dmem_exec;
+EM_pipeline_in(24 downto 9) <= RRE_pipeline_out(37 downto 22);
 -- RD --
 rd_exec <= RRE_pipeline_out(40 downto 38);
 EM_pipeline_in(27 downto 25) <= rd_exec;
@@ -676,9 +656,34 @@ EM_pipeline_in(45) <= alu_z when zflagc_exec = '1' else
 -- PC --
 EM_pipeline_in(61 downto 46) <= RRE_pipeline_out(110 downto 95);
 
+-- RM --
+EM_pipeline_in(64 downto 62) <= RRE_pipeline_out(21 downto 19);
+
 ------------------ MEMORY STAGE ------------------
 memory_control_in(4 downto 0) <= EM_pipeline_out(8 downto 4);
 memory_control_in(5) <= EM_pipeline_out(1);
+
+dmem_forward : ForwardingUnit port map
+	(
+		Rsrc => EM_pipeline_out(64 downto 62),
+		Rmem => "000",
+		Rwb => rd_writeback,
+		
+		NOPmem => '1',
+		NOPwb => MWB_pipeline_out(0),
+		LW => '0',
+		Wen_mem => '0',
+		Wen_wb => wen_writeback,
+			
+		Idef => EM_pipeline_out(24 downto 9),
+		Imem => (others => '0'),
+		Iwb => d_writeback,
+		Ipc => EM_pipeline_out(61 downto 46),
+		
+		Fout => dmem_memory
+		--Stall => dmem_exec_stall
+	);
+	
 
 memory_control: ControlWord  generic map (size=>6) port map
 	(
@@ -697,7 +702,7 @@ ad_memory <= EM_pipeline_out(43 downto 28);
 data_ram1: data_ram port map
 	(
 		address => ad_memory(9 downto 0),
-		data => EM_pipeline_out(24 downto 9),
+		data => dmem_memory,
 		wren => mw_memory,			--------------------NOT SURE -----------need not always read if not writing?--------
 		q => ram_dout,
 		clock => clk

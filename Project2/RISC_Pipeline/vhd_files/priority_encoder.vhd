@@ -17,21 +17,21 @@ begin
 	N <= ( x(7) or x(6) or x(5) or x(4) or x(3) or x(2) or x(1) or x(0) ) ;
 	 pri_enc : process (x) is
     begin
-        if (x(7)='1') then
+        if (x(0)='1') then
             stmp <= "000";
-        elsif (x(6)='1') then
-            stmp <= "001";
-        elsif (x(5)='1') then
-            stmp <= "010";
-        elsif (x(4)='1') then
-            stmp <= "011";
-        elsif (x(3)='1') then
-            stmp <= "100";
-        elsif (x(2)='1') then
-            stmp <= "101";
         elsif (x(1)='1') then
+            stmp <= "001";
+        elsif (x(2)='1') then
+            stmp <= "010";
+        elsif (x(3)='1') then
+            stmp <= "011";
+        elsif (x(4)='1') then
+            stmp <= "100";
+        elsif (x(5)='1') then
+            stmp <= "101";
+        elsif (x(6)='1') then
             stmp <= "110";
-        elsif (x(0)='1') then
+        elsif (x(7)='1') then
             stmp <= "111";
 			else
 				stmp <= "000";

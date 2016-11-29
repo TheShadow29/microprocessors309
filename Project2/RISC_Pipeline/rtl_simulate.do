@@ -98,7 +98,6 @@ sim:/test_pipeline/dut/dp/stall_beq \
 sim:/test_pipeline/dut/dp/stall_lw \
 sim:/test_pipeline/dut/dp/alu1_exec_stall \
 sim:/test_pipeline/dut/dp/alu2_exec_stall \
-sim:/test_pipeline/dut/dp/dmem_exec_stall \
 sim:/test_pipeline/dut/dp/alu_c \
 sim:/test_pipeline/dut/dp/alu_z \
 sim:/test_pipeline/dut/dp/flagfwd_stall \
@@ -111,7 +110,6 @@ sim:/test_pipeline/dut/dp/rd_exec \
 sim:/test_pipeline/dut/dp/exec_control_in \
 sim:/test_pipeline/dut/dp/alu1_exec \
 sim:/test_pipeline/dut/dp/alu2_exec \
-sim:/test_pipeline/dut/dp/dmem_exec \
 sim:/test_pipeline/dut/dp/alu_in1 \
 sim:/test_pipeline/dut/dp/alu_in2 \
 sim:/test_pipeline/dut/dp/alu_out \
@@ -128,6 +126,7 @@ sim:/test_pipeline/dut/dp/c_memory \
 sim:/test_pipeline/dut/dp/z_memory \
 sim:/test_pipeline/dut/dp/ram_z \
 sim:/test_pipeline/dut/dp/wen_memory \
+sim:/test_pipeline/dut/dp/dmem_memory \
 sim:/test_pipeline/dut/dp/ram_dout \
 sim:/test_pipeline/dut/dp/ad_memory \
 sim:/test_pipeline/dut/dp/rd_memory \
