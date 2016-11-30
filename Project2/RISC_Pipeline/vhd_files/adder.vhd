@@ -64,3 +64,23 @@ architecture Behave of Incrementer is
 begin
     z <= x + one_16b;
 end Behave;
+
+library ieee;
+	use ieee.std_logic_1164.all;
+library work;
+	use work.all_components.all;
+	use ieee.std_logic_unsigned.ALL;
+   use ieee.numeric_std.all;
+
+entity Incrementer3 is
+    port(
+        x: in std_logic_vector(2 downto 0);
+        z: out std_logic_vector(2 downto 0) := (others => '0')
+    );
+end entity;
+architecture Behave of Incrementer3 is
+    -- z=x+1
+	 constant one_16b : std_logic_vector(2 downto 0) := (0 => '1', others => '0');
+begin
+    z <= x + one_16b;
+end Behave;

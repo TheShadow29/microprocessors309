@@ -35,6 +35,13 @@ package all_components is
 		 );
 	end component;
 	
+	component Incrementer3 is
+		 port(
+			  x: in std_logic_vector(2 downto 0);
+			  z: out std_logic_vector(2 downto 0)
+		 );
+	end component;
+	
 	component PriorityEncoder is
 		port ( x : in std_logic_vector(7 downto 0) ;
 				 S : out std_logic_vector(2 downto 0);

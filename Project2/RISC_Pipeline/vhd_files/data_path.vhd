@@ -59,10 +59,10 @@ architecture data of data_path is
 		-- 43 downto 36 -> Tx
 		-- 59 downto 44 -> Imm
 		-- 75 downto 60 -> PC
-		signal DRR_pipeline_in, DRR_pipeline_out: std_logic_vector(75 downto 0) := (0 => '1', others=>'0');
+		signal DRR_pipeline_in, DRR_pipeline_out: std_logic_vector(78 downto 0) := (0 => '1', others=>'0');
 		
 		---- REGREAD STAGE SIGNALS ----
-		signal a1_regread, a2_regread, PE_regread: std_logic_vector(2 downto 0) := (others=>'0');
+		signal a1_regread, a2_regread, PE_regread, lmsm_counter_regread: std_logic_vector(2 downto 0) := (others=>'0');
 		signal regfile_d1, regfile_d2, PE_zp_regread, d1_regread_jlr: std_logic_vector(15 downto 0) := (others=>'0');
 		
 		signal jlr_regread, a1c_regread,
@@ -329,6 +329,11 @@ DRR_pipeline_in(29 downto 27) <= ra_irdecoder;
 DRR_pipeline_in(32 downto 30) <= rb_irdecoder;
 DRR_pipeline_in(35 downto 33) <= rc_irdecoder;
 	
+-- LM/SM counter --
+DRR_pipeline_in(78 downto 76) <= LMSM_counter_regread when lmsm_regread = '1' and V_regread = '1' else
+											(others => '0');
+											
+											
 DRR_pipeline_in(43 downto 36) <= Txn_regread when (lmsm_regread = '1' and V_regread = '1') else
 											lmsm_imm_irdecoder when (lmsm_irdecoder = '1' and V_regread = '0') else
 											(others => '0');
@@ -357,6 +362,15 @@ DRR_pipeline_pe: DataRegister port map
 	(
 		Din => DRR_pipeline_in(43 downto 36),
 		Dout => DRR_pipeline_out(43 downto 36),
+		enable => DRR_pipeline_pe_en,
+		clk => clk,
+		reset=>reset
+	);
+	
+DRR_pipeline_counter: DataRegister port map
+	(
+		Din => DRR_pipeline_in(78 downto 76),
+		Dout => DRR_pipeline_out(78 downto 76),
 		enable => DRR_pipeline_pe_en,
 		clk => clk,
 		reset=>reset
@@ -416,7 +430,13 @@ lmsm_pe: PriorityEncoder port map
 		N => V_regread
 	);
 	
-PE_zp_regread(2 downto 0) <= PE_regread;
+lmsm_incr: Incrementer3 port map
+	(
+		X => DRR_pipeline_out(78 downto 76),
+		Z => lmsm_counter_regread
+	);
+	
+PE_zp_regread(2 downto 0) <= DRR_pipeline_out(78 downto 76);
 PE_zp_regread(15 downto 3) <= (others => '0');
 
 --32-30 : rb
